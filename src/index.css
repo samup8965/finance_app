@@ -1,0 +1,70 @@
+/* Set overall theme colors */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0a1f44; /* Deep navy */
+  color: #ffffff;
+}
+
+/* Signup form container */
+.signup-form {
+  background-color: #122b5c; /* Slightly lighter navy */
+  padding: 2rem;
+  margin: 5rem auto;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Heading */
+.signup-heading {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #ffffff;
+}
+
+/* Paragraph link */
+.signup-form p {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+.signup-form a {
+  color: #4da6ff;
+  text-decoration: none;
+}
+.signup-form a:hover {
+  text-decoration: underline;
+}
+
+/* Inputs */
+.signup-form input[type="email"],
+.signup-form input[type="password"] {
+  width: 95%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #e6ecf0;
+  color: #000;
+}
+
+/* Button */
+.signup-form button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #236ad4;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-button:hover {
+  background-color: #124da6;
+}
