@@ -3,12 +3,21 @@ import App from "./App";
 import Signup from "./components/signup";
 import Signin from "./components/signin";
 import Dashboard from "./components/dashboard";
+import PrivateRoute from "./components/PrivateRoute";
 
 export const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/signup", element: <Signup /> },
   { path: "/signin", element: <Signin /> },
-  { path: "/dashboard", element: <Dashboard /> },
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        {" "}
+        <Dashboard />{" "}
+      </PrivateRoute>
+    ),
+  },
 ]);
 
 // Notes for me to remember
