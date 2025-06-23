@@ -8,28 +8,75 @@ const Signup = () => {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // Authentication failures after seding request to Supabase
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({
+    email: "",
+    password: "",
+  });
 
   const { session, signUpNewUser } = UserAuth();
   const navigate = useNavigate();
+
+  // Just for my sake
   console.log(session);
   console.log(email, password);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    setValidationErrors({
+      email: emailError,
+      password: passwordError,
+    });
+    // Stops the request to Supabase
+    if (emailError || passwordError) {
+      return;
+    }
+
     try {
       const result = await signUpNewUser(email, password);
 
       if (result.success) {
         navigate("/dashboard");
+      } else {
+        setError(result.error?.message || "Sign up failed");
       }
     } catch (error) {
       setError("an error occurred");
     } finally {
       setLoading(false);
     }
+  };
+
+  const validateEmail = (email: string) => {
+    if (!email) {
+      return "Email is required";
+    }
+    if (!email.includes("@")) {
+      return "Please enter a valid email";
+    }
+    return "";
+  };
+
+  const validatePassword = (password: string) => {
+    if (!password) {
+      return "Password is required";
+    }
+    if (password.length < 8) {
+      return "Password must be at least 6 characters";
+    }
+    if (!/[A-Z]/.test(password)) {
+      return "Password must contain at least one capital letter";
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      return "Password must contain at least one special character";
+    }
+    return "";
   };
 
   return (
@@ -59,6 +106,12 @@ const Signup = () => {
             Sign Up
           </button>
           {error && <p className="signup-error">{error}</p>}
+          {validationErrors.email && (
+            <p className="signup-error">{validationErrors.email}</p>
+          )}
+          {validationErrors.password && (
+            <p className="signup-errpr">{validationErrors.password}</p>
+          )}
         </div>
       </form>
     </div>
