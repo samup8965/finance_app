@@ -97,9 +97,28 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     });
     // Set up a listener that triggers every time a user logs in or out
     // _event tells us what happened and session contains the data
-    supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+
+      // Handle different auth events
+      if (_event === "SIGNED_IN") {
+        console.log("✅ User signed in.");
+      } else if (_event === "SIGNED_OUT") {
+        console.log("🚪 User signed out.");
+      } else if (_event === "TOKEN_REFRESHED") {
+        console.log("🔁 Session token was refreshed.");
+      } else if (_event === "USER_UPDATED") {
+        console.log("📝 User information was updated.");
+      } else if (_event === "PASSWORD_RECOVERY") {
+        console.log("🔒 Password recovery flow started.");
+      } else {
+        console.log("ℹ️ Other event:", event);
+      }
     });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Since we are data fetching we use useeffect. The [] means it runs once known as a dependency array

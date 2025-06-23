@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { UserAuth } from "../context/AuthContext.tsx";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signup = () => {
   // States
@@ -14,6 +15,9 @@ const Signup = () => {
     email: "",
     password: "",
   });
+
+  // Password visible state
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
   const { session, signUpNewUser } = UserAuth();
   const navigate = useNavigate();
@@ -42,7 +46,9 @@ const Signup = () => {
       const result = await signUpNewUser(email, password);
 
       if (result.success) {
-        navigate("/dashboard");
+        setError(
+          "Please check your email and click verification link to complete registration"
+        );
       } else {
         setError(result.error?.message || "Sign up failed");
       }
@@ -79,6 +85,10 @@ const Signup = () => {
     return "";
   };
 
+  const handlePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <div className="signup-container">
       <form onSubmit={handleSignUp} className="signup-form">
@@ -89,19 +99,24 @@ const Signup = () => {
             Sign in!
           </Link>
         </p>
-        <div className="signup-input-group">
+        <div>
           <input
             onChange={(e) => setEmail(e.target.value)}
             type="email"
             placeholder="Email"
             className="signup-input"
           />
-          <input
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            placeholder="Password"
-            className="signup-input"
-          />
+          <div className="password-container">
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              type={passwordVisible ? "text" : "password"}
+              placeholder="Password"
+              className="signup-input"
+            />
+            <i className="eye-icon" onClick={handlePasswordVisibility}>
+              {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+            </i>
+          </div>
           <button type="submit" className="signup-button">
             Sign Up
           </button>
@@ -110,7 +125,7 @@ const Signup = () => {
             <p className="signup-error">{validationErrors.email}</p>
           )}
           {validationErrors.password && (
-            <p className="signup-errpr">{validationErrors.password}</p>
+            <p className="signup-error">{validationErrors.password}</p>
           )}
         </div>
       </form>

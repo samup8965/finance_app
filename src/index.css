@@ -1,4 +1,3 @@
-/* Set overall theme colors */
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -8,7 +7,7 @@ body {
 
 /* Signup form container */
 .signup-form {
-  background-color: #122b5c; /* Slightly lighter navy */
+  background-color: #122b5c;
   padding: 2rem;
   margin: 5rem auto;
   width: 90%;
@@ -39,19 +38,40 @@ body {
   text-decoration: underline;
 }
 
+/* Password container for positioning */
+.password-container {
+  position: relative;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
 /* Inputs */
 .signup-form input[type="email"],
 .signup-form input[type="password"] {
-  width: 95%;
+  width: 100%;
   padding: 0.75rem;
   margin: 0.5rem 0;
   border: none;
   border-radius: 5px;
   background-color: #e6ecf0;
   color: #000;
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
-/* Button */
+.password-container input[type="password"],
+.password-container input[type="text"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #e6ecf0;
+  color: #000;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
 .signup-form button {
   width: 100%;
   padding: 0.75rem;
@@ -67,4 +87,24 @@ body {
 
 .signup-button:hover {
   background-color: #124da6;
+}
+
+.signup-error {
+  color: #f2f2f2;
+  font-weight: bold;
+  padding: 0.75rem;
+}
+
+.eye-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: #6c757d;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.eye-icon:hover {
+  color: #495057;
 }
