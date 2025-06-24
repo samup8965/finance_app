@@ -20,7 +20,6 @@ const Signup = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
   const { session, signUpNewUser } = UserAuth();
-  const navigate = useNavigate();
 
   // Just for my sake
   console.log(session);
@@ -101,14 +100,28 @@ const Signup = () => {
         </p>
         <div>
           <input
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setValidationErrors({
+                email: "",
+                password: "",
+              });
+              setError("");
+            }}
             type="email"
             placeholder="Email"
             className="signup-input"
           />
           <div className="password-container">
             <input
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setValidationErrors({
+                  email: "",
+                  password: "",
+                });
+                setError("");
+              }}
               type={passwordVisible ? "text" : "password"}
               placeholder="Password"
               className="signup-input"
