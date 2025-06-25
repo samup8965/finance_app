@@ -4,11 +4,21 @@ import Signup from "./components/signup";
 import Signin from "./components/signin";
 import Dashboard from "./components/dashboard";
 import PrivateRoute from "./components/PrivateRoute";
+import ResetPassword from "./components/resetPassword";
+import { AuthContextProvider } from "./context/AuthContext";
 
 export const router = createBrowserRouter([
-  { path: "/", element: <App /> },
+  {
+    path: "/",
+    element: (
+      <AuthContextProvider>
+        <App />
+      </AuthContextProvider>
+    ),
+  },
   { path: "/signup", element: <Signup /> },
   { path: "/signin", element: <Signin /> },
+  { path: "/resetpassword", element: <ResetPassword /> },
   {
     path: "/dashboard",
     element: (

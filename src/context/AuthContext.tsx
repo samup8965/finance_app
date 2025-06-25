@@ -7,7 +7,7 @@ import {
 } from "react";
 
 import { supabase } from "../supabaseClient";
-import type { Session, AuthResponse } from "@supabase/supabase-js";
+import { type Session, type AuthResponse } from "@supabase/supabase-js";
 
 type SignUpResult =
   | {
@@ -28,12 +28,23 @@ type SignInResult =
       success: false;
       error: string;
     };
+type ResetPasswordResult = // Makes the types according to documentation and responses
+
+    | {
+        success: true;
+        data: {};
+      }
+    | {
+        success: false;
+        error: string;
+      };
 
 interface AuthContextType {
   session: Session | null;
   signUpNewUser: (email: string, password: string) => Promise<SignUpResult>;
   signInUser: (email: string, password: string) => Promise<SignInResult>;
   signOut: () => void;
+  resetPassword: (email: string) => Promise<ResetPasswordResult>;
 }
 
 // Create a new contect called AuthContext - empty container that can hold and share data - like signup signin and other global states
@@ -42,6 +53,7 @@ const AuthContext = createContext<AuthContextType>({
   signUpNewUser: async () => ({ success: false, error: null }), // dummy function as default
   signInUser: async () => ({ success: false, error: "Some error" }),
   signOut: async () => {},
+  resetPassword: async () => ({ success: false, error: "Some error" }),
 });
 
 // Create a new component and the children parameter indicates that compnent will be wrapped around other compnents the children
@@ -133,9 +145,27 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const resetPassword = async (email: string): Promise<ResetPasswordResult> => {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "http://localhost:5173/resetpassword",
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+
+    return {
+      success: true,
+      data,
+    };
+  };
+
   return (
     <AuthContext.Provider
-      value={{ session, signUpNewUser, signInUser, signOut }}
+      value={{ session, signUpNewUser, signInUser, signOut, resetPassword }}
     >
       {children}
     </AuthContext.Provider>

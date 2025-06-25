@@ -4,6 +4,10 @@ import { useState } from "react";
 import { UserAuth } from "../context/AuthContext.tsx";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+// Counldnt figure out how to redirect centrally need to figure that out
+import { useEffect } from "react";
+import { supabase } from "../supabaseClient";
+
 const Signup = () => {
   // States
 
@@ -20,6 +24,8 @@ const Signup = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
   const { session, signUpNewUser } = UserAuth();
+
+  const navigate = useNavigate();
 
   // Just for my sake
   console.log(session);
@@ -87,6 +93,20 @@ const Signup = () => {
   const handlePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN") {
+          navigate("/dashboard");
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [navigate]);
 
   return (
     <div className="signup-container">
