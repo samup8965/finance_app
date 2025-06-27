@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import Signup from "./components/signup";
 import Signin from "./components/signin";
-import Dashboard from "./components/dashboard";
+import Dashboard from "./pages/dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import ResetPassword from "./components/resetPassword";
 import { AuthContextProvider } from "./context/AuthContext";
