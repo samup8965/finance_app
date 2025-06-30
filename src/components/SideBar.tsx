@@ -7,7 +7,15 @@ import { useStateContext } from "../context/ContextProvider";
 import { links } from "../data/sidebarLinks";
 
 export const SideBar = () => {
-  const { activeMenu, setActiveMenu } = useStateContext();
+  const { activeMenu, setActiveMenu, screenSize } = useStateContext();
+
+  const handleCloseSideBar = () => {
+    if (screenSize != undefined) {
+      if (activeMenu && screenSize <= 900) {
+        setActiveMenu(false);
+      }
+    }
+  };
 
   const activeLink =
     "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 text-white bg-slate-700 hover:bg-slate-800";
@@ -22,7 +30,7 @@ export const SideBar = () => {
           <div className="flex justify-between items-center">
             <Link
               to="/dashboard"
-              onClick={() => setActiveMenu(false)}
+              onClick={handleCloseSideBar}
               className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight text-slate-900 "
             >
               <span>Menu</span>
@@ -33,7 +41,7 @@ export const SideBar = () => {
                 onClick={() =>
                   setActiveMenu((prevActiveMenu) => !prevActiveMenu)
                 }
-                className="text-xl rounded-full p-3 hover:bg-light-gray mt-4 block"
+                className="text-xl rounded-full p-3 hover:bg-light-gray mt-4 block md:hidden"
               >
                 <MdOutlineCancel />
               </button>
@@ -48,7 +56,7 @@ export const SideBar = () => {
                   <NavLink
                     to={`/${link.name}`}
                     key={link.name}
-                    onClick={() => {}}
+                    onClick={handleCloseSideBar}
                     className={({ isActive }) =>
                       isActive ? activeLink : normalLink
                     }

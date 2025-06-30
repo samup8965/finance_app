@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import { AiOutlineMenu } from "react-icons/ai";
 import { useStateContext } from "../context/ContextProvider";
 import { MdKeyboardArrowDown } from "react-icons/md";
-
+import UserProfile from "./userProfile";
 // Interface for NavButton props
 interface NavButtonProps {
   title: string;
@@ -39,10 +39,38 @@ const NavButton: React.FC<NavButtonProps> = ({
 );
 
 export const Navbar: React.FC = () => {
-  const { activeMenu, setActiveMenu } = useStateContext();
+  const {
+    activeMenu,
+    setActiveMenu,
+    profileClicked,
+    setProfileClicked,
+    screenSize,
+    setScreenSize,
+  } = useStateContext();
+
+  useEffect(() => {
+    const handleResize = () => setScreenSize(window.innerWidth);
+    console.log(window.innerWidth);
+
+    window.addEventListener("resize", handleResize);
+
+    handleResize(); // call initially
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (screenSize != undefined) {
+      if (screenSize <= 900) {
+        setActiveMenu(false);
+      } else {
+        setActiveMenu(true);
+      }
+    }
+  }, [screenSize]);
 
   return (
-    <div className="flex justify-between p-2 md:mx-6 relative">
+    <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative">
       <NavButton
         title="Menu"
         customFunc={() =>
@@ -51,11 +79,10 @@ export const Navbar: React.FC = () => {
         color="blue"
         icon={<AiOutlineMenu />}
       />
-
       <TooltipComponent content="Profile" position="BottomCenter">
         <div
           className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded -lg"
-          onClick={() => handleClick("userProfile")}
+          onClick={() => setProfileClicked(!profileClicked)}
         >
           <p>
             <span className="text-gray-400 text-14"> Hi, </span>{" "}
@@ -66,6 +93,7 @@ export const Navbar: React.FC = () => {
           <MdKeyboardArrowDown className="text-gray-400 text-14" />
         </div>
       </TooltipComponent>
+      {profileClicked && <UserProfile />} {/* This need to change */}
     </div>
   );
 };
