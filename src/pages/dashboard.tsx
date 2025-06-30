@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { UserAuth } from "../context/AuthContext";
+import { useStateContext } from "../context/ContextProvider";
 import { useNavigate } from "react-router-dom";
 
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
@@ -8,9 +9,8 @@ import { Navbar } from "../components/Navbar";
 
 const Dashboard = () => {
   const { session, signOut } = UserAuth();
+  const { activeMenu } = useStateContext();
   const navigate = useNavigate();
-
-  const activeMenu = true;
 
   console.log(session);
 
@@ -41,7 +41,9 @@ const Dashboard = () => {
           <SideBar />
         </div>
       ) : (
-        <div className="w-0 dark:bg-secondary-dark-bg">Sidebar</div>
+        <div className="w-0 dark:bg-secondary-dark-bg">
+          <SideBar />
+        </div>
       )}
 
       {/*Nav bar*/}
