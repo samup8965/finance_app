@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import { SideBar } from "../components/SideBar";
 import { Navbar } from "../components/Navbar";
+import Overview from "./Overview";
 
 const Dashboard = () => {
   const { session, signOut } = UserAuth();
@@ -56,6 +57,9 @@ const Dashboard = () => {
       >
         <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
           <Navbar />
+        </div>
+        <div className="m-3 p-5">
+          <Overview />
         </div>
       </div>
     </div>
