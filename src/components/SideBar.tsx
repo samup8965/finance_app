@@ -70,9 +70,9 @@ export const SideBar = () => {
           </div>
           {/* Connect your bank*/}
           <div className="mt-10">
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-2 px-4 rounded-lg shadow-2xl hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] transition duration-300 cursor-pointer ml-*">
+            <p className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-2 px-4 rounded-lg shadow-2xl hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] transition duration-300 cursor-pointer ml-*">
               <ConnectBank />
-            </button>
+            </p>
           </div>
         </>
       )}

@@ -23,13 +23,16 @@ export const TrueLayerCallback = () => {
       if (code) {
         try {
           // Send code to your backend to exchange for tokens
-          const response = await fetch("/api/exchange-token", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ code }),
-          });
+          const response = await fetch(
+            "https://finance-app-3iyk.vercel.app/api/exchange-token",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ code }),
+            }
+          );
 
           const data = await response.json();
 
