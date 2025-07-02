@@ -1,29 +1,28 @@
-import React, { useEffect } from "react";
 import { UserAuth } from "../context/AuthContext";
 import { useStateContext } from "../context/ContextProvider";
-import { useNavigate } from "react-router-dom";
 
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import { SideBar } from "../components/SideBar";
 import { Navbar } from "../components/Navbar";
 import Overview from "./Overview";
 
+// Rmoved the signout features for now
+
 const Dashboard = () => {
-  const { session, signOut } = UserAuth();
+  const { session } = UserAuth();
   const { activeMenu } = useStateContext();
-  const navigate = useNavigate();
 
   console.log(session);
 
-  const handleSignOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    try {
-      await signOut();
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const handleSignOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
+  //   try {
+  //     await signOut();
+  //     navigate("/");
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   return (
     <div className="flex relative dark:bg-main-dark-bg">

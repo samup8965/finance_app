@@ -23,6 +23,8 @@ const Signup = () => {
   // Password visible state
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
+  console.log(loading);
+
   const { session, signUpNewUser } = UserAuth();
 
   const navigate = useNavigate();
@@ -95,13 +97,11 @@ const Signup = () => {
   };
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === "SIGNED_IN") {
-          navigate("/dashboard");
-        }
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") {
+        navigate("/dashboard");
       }
-    );
+    });
 
     return () => {
       authListener.subscription.unsubscribe();

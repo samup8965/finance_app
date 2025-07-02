@@ -72,13 +72,11 @@ const ResetPassword = () => {
   };
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === "USER_UPDATED") {
-          navigate("/signin");
-        }
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "USER_UPDATED") {
+        navigate("/signin");
       }
-    );
+    });
 
     return () => {
       authListener.subscription.unsubscribe();

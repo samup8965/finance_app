@@ -40,7 +40,6 @@ const NavButton: React.FC<NavButtonProps> = ({
 
 export const Navbar: React.FC = () => {
   const {
-    activeMenu,
     setActiveMenu,
     profileClicked,
     setProfileClicked,
