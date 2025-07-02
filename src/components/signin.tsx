@@ -15,6 +15,8 @@ const Signin = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  loading;
+
   // New states for password reset flow
   const [showResetForm, setShowResetForm] = useState<Boolean>(false);
   const [resetLoading, setResetLoading] = useState<boolean>(false);
@@ -128,6 +130,7 @@ const Signin = () => {
       (event, session) => {
         if (event === "SIGNED_IN") {
           navigate("/dashboard");
+          console.log(session);
         }
       }
     );

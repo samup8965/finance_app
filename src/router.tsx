@@ -6,6 +6,7 @@ import Dashboard from "./pages/dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import ResetPassword from "./components/resetPassword";
 import { AuthContextProvider } from "./context/AuthContext";
+import { TrueLayerCallback } from "./components/TrueLayerCallback";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,14 @@ export const router = createBrowserRouter([
   { path: "/signup", element: <Signup /> },
   { path: "/signin", element: <Signin /> },
   { path: "/resetpassword", element: <ResetPassword /> },
+  {
+    path: "/truelayercallback",
+    element: (
+      <PrivateRoute>
+        <TrueLayerCallback />
+      </PrivateRoute>
+    ),
+  },
   {
     path: "/dashboard",
     element: (
