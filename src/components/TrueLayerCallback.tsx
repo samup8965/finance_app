@@ -38,7 +38,7 @@ export const TrueLayerCallback = () => {
 
           if (response.ok) {
             // Sucess need to store access tokens
-            console.log(data); // For now print
+            console.log("Sucessful" + data); // For now print
 
             navigate("/dashboard");
           } else {
