@@ -3,9 +3,9 @@ export default async function handler(req, res) {
   console.log("Function called with method:", req.method);
   console.log("Request body:", req.body);
   console.log("Environment variables check:", {
-    hasClientId: !!process.env.TRUECLIENT_ID,
-    hasClientSecret: !!process.env.TRUECLIENT_SECRET,
-    hasRedirectUri: !!process.env.TRUE_REDIRECT_URI,
+    hasClientId: !!process.env.TRUELAYERCLIENT_ID,
+    hasClientSecret: !!process.env.TRUELAYERCLIENT_SECRET,
+    hasRedirectUri: !!process.env.TRUELAYER_REDIRECT_URI,
   });
 
   try {
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
     // Send POST request to Truelayer's token endpoint
     const tokenResponse = await fetch(
-      "https://auth.truelayer.com/connect/token",
+      "https://auth.truelayer-sandbox.com/connect/token",
       {
         method: "POST",
         headers: {
