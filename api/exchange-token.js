@@ -1,12 +1,11 @@
-import fetch from "node-fetch"; // To make HTTP requests
+// No import needed - fetch is available globally in Vercel
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // OPTIONS is part of CORS and must return 200 without failing before calling vercel
-
+  // Handle preflight OPTIONS request
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
@@ -19,22 +18,18 @@ export default async function handler(req, res) {
   const { code } = req.body;
 
   if (!code) {
-    // Need code to proceed
     return res.status(400).json({ error: "Missing code" });
   }
 
   try {
     // Send POST request to Truelayer's token endpoint
-
-    // tokenResponse is a response object
     const tokenResponse = await fetch(
       "https://auth.truelayer.com/connect/token",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded", // The format server expects to receive the data
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        // Search those params in URL
         body: new URLSearchParams({
           grant_type: "authorization_code",
           client_id: process.env.TRUECLIENT_ID,
@@ -48,14 +43,13 @@ export default async function handler(req, res) {
     const data = await tokenResponse.json();
 
     if (!tokenResponse.ok) {
-      // SOmething went wrong with the TrueLayer API requests
       return res.status(tokenResponse.status).json(data);
     }
 
-    // Sucessful: we can return the token data to the frontend
+    // Return successful response
     return res.status(200).json(data);
   } catch (error) {
-    // Unexpected netwrok erros
+    console.error("Token exchange error:", error);
     return res.status(500).json({ error: error.message });
   }
-}
+};
