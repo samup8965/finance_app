@@ -22,11 +22,7 @@ export const router = createBrowserRouter([
   { path: "/resetpassword", element: <ResetPassword /> },
   {
     path: "/truelayercallback",
-    element: (
-      <PrivateRoute>
-        <TrueLayerCallback />
-      </PrivateRoute>
-    ),
+    element: <TrueLayerCallback />,
   },
   {
     path: "/dashboard",

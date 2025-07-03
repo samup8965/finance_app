@@ -1,17 +1,22 @@
 // This component handles the URL parameters and extratcs the code
 // Sends to backend for the token exchange
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export const TrueLayerCallback = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); // Get the code parameters
+  const [searchParams, setSearchParams] = useSearchParams(); // Get the code parameters
+
+  const hasExchangedCode = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
       const code = searchParams.get("code");
       const error = searchParams.get("error");
+
+      console.log("Redirect received code:", code);
+      console.log("Redirect received error:", error);
 
       if (error) {
         // for now just print it
@@ -20,7 +25,8 @@ export const TrueLayerCallback = () => {
         return;
       }
 
-      if (code) {
+      if (code && !hasExchangedCode.current) {
+        hasExchangedCode.current = true;
         try {
           // Send code to your backend to exchange for tokens
           const response = await fetch(
@@ -40,20 +46,25 @@ export const TrueLayerCallback = () => {
             // Sucess need to store access tokens
             console.log("Sucessful" + data); // For now print
 
+            setSearchParams({});
+
             navigate("/dashboard");
           } else {
             console.error("Token exhange failed:", data);
+            setSearchParams({});
             navigate("/dashboard");
           }
         } catch (error) {
           console.error("Network error:", error);
+
+          setSearchParams({});
           navigate("/dashboard");
         }
       }
     };
 
     handleCallback();
-  }, [searchParams]);
+  }, [searchParams, navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

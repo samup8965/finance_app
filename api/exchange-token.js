@@ -31,6 +31,7 @@ export default async function handler(req, res) {
     }
 
     const { code } = req.body;
+    console.log("Received code in backend:", code);
 
     if (!code) {
       console.log("Missing code in request body");
@@ -56,6 +57,8 @@ export default async function handler(req, res) {
         }),
       }
     );
+
+    console.log("Token exchange request body:", requestBody.toString());
 
     console.log("TrueLayer response status:", tokenResponse.status);
 
