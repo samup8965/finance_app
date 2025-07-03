@@ -3,8 +3,8 @@ export default async function handler(req, res) {
   console.log("Function called with method:", req.method);
   console.log("Request body:", req.body);
   console.log("Environment variables check:", {
-    hasClientId: !!process.env.TRUELAYERCLIENT_ID,
-    hasClientSecret: !!process.env.TRUELAYERCLIENT_SECRET,
+    hasClientId: !!process.env.TRUELAYER_CLIENT_ID,
+    hasClientSecret: !!process.env.TRUELAYER_CLIENT_SECRET,
     hasRedirectUri: !!process.env.TRUELAYER_REDIRECT_URI,
   });
 
