@@ -45,9 +45,9 @@ export default async function handler(req, res) {
         },
         body: new URLSearchParams({
           grant_type: "authorization_code",
-          client_id: process.env.TRUECLIENT_ID,
-          client_secret: process.env.TRUECLIENT_SECRET,
-          redirect_uri: process.env.TRUE_REDIRECT_URI,
+          client_id: process.env.TRUELAYER_CLIENT_ID,
+          client_secret: process.env.TRUELAYER_CLIENT_SECRET,
+          redirect_uri: process.env.TRUELAYER_REDIRECT_URI,
           code: code,
         }),
       }
