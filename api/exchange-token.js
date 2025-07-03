@@ -8,6 +8,10 @@ export default async function handler(req, res) {
     hasRedirectUri: !!process.env.TRUELAYER_REDIRECT_URI,
   });
 
+  console.log(process.env.TRUELAYER_CLIENT_ID);
+  console.log(process.env.TRUELAYER_CLIENT_SECRET);
+  console.log(process.env.TRUELAYER_REDIRECT_URI);
+
   try {
     // Set CORS headers
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
