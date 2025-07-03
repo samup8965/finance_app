@@ -24,7 +24,7 @@ export const TrueLayerCallback = () => {
         try {
           // Send code to your backend to exchange for tokens
           const response = await fetch(
-            "https://finance-app-3iyk.vercel.app/api/exchange-token",
+            "https://finance-app-steel-seven.vercel.app/api/exchange-token",
             {
               method: "POST",
               headers: {

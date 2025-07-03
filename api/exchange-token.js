@@ -37,7 +37,7 @@ export default async function handler(req, res) {
 
     // Send POST request to Truelayer's token endpoint
     const tokenResponse = await fetch(
-      "https://auth.truelayer-sandbox.com/connect/token",
+      " https://auth.truelayer.com/connect/token",
       {
         method: "POST",
         headers: {
