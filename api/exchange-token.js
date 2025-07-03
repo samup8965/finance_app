@@ -40,7 +40,16 @@ export default async function handler(req, res) {
 
     console.log("Making request to TrueLayer...");
 
-    // Send POST request to Truelayer's token endpoint
+    const requestBody = new URLSearchParams({
+      grant_type: "authorization_code",
+      client_id: process.env.TRUELAYER_CLIENT_ID,
+      client_secret: process.env.TRUELAYER_CLIENT_SECRET,
+      redirect_uri: process.env.TRUELAYER_REDIRECT_URI,
+      code: code,
+    });
+
+    console.log("Token exchange request body:", requestBody.toString());
+
     const tokenResponse = await fetch(
       "https://auth.truelayer-sandbox.com/connect/token",
       {
@@ -48,17 +57,9 @@ export default async function handler(req, res) {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: new URLSearchParams({
-          grant_type: "authorization_code",
-          client_id: process.env.TRUELAYER_CLIENT_ID,
-          client_secret: process.env.TRUELAYER_CLIENT_SECRET,
-          redirect_uri: process.env.TRUELAYER_REDIRECT_URI,
-          code: code,
-        }),
+        body: requestBody,
       }
     );
-
-    console.log("Token exchange request body:", requestBody.toString());
 
     console.log("TrueLayer response status:", tokenResponse.status);
 
