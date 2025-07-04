@@ -28,6 +28,7 @@ export default async function handler(req, res) {
   try {
     // Get the cookie from HTTP cookie
     const accessToken = req.cookies.truelayer_access_token;
+    console.log(accessToken);
 
     if (!accessToken) {
       return res.status(401).json({
