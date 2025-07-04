@@ -4,7 +4,7 @@ const AccountFetcher = () => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const response = await fetch("/api/accounts", {
+        const response = await fetch("/api/balance", {
           method: "GET",
           credentials: "include", // for cookies
         });
