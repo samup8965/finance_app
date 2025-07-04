@@ -1,17 +1,4 @@
 export default async function handler(req, res) {
-  // Add debugging
-  console.log("Function called with method:", req.method);
-  console.log("Request body:", req.body);
-  console.log("Environment variables check:", {
-    hasClientId: !!process.env.TRUELAYER_CLIENT_ID,
-    hasClientSecret: !!process.env.TRUELAYER_CLIENT_SECRET,
-    hasRedirectUri: !!process.env.TRUELAYER_REDIRECT_URI,
-  });
-
-  console.log(process.env.TRUELAYER_CLIENT_ID);
-  console.log(process.env.TRUELAYER_CLIENT_SECRET);
-  console.log(process.env.TRUELAYER_REDIRECT_URI);
-
   try {
     // Set CORS headers
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
@@ -63,20 +50,43 @@ export default async function handler(req, res) {
 
     console.log("TrueLayer response status:", tokenResponse.status);
 
-    const data = await tokenResponse.json();
+    const tokenData = await tokenResponse.json();
 
     if (!tokenResponse.ok) {
-      console.log("TrueLayer error:", data);
-      return res.status(tokenResponse.status).json(data);
+      console.log("TrueLayer error:", tokenData);
+      return res.status(tokenResponse.status).json(tokenData);
     }
 
-    console.log("Success! Returning token data");
-    return res.status(200).json(data);
+    // We set cookies by using a Set-cookie header on a request so the browser can do it
+
+    // We store the access token give it the HTTP flag
+
+    // Block cross site requests
+
+    const isProduction = process.env.TRUELAYER_ENVIRONMENT === "production";
+    const isSecure = isProduction; // Only secure in production
+    const sameSite = isProduction ? "None" : "Lax"; // None for cross-origin in production, Lax for development
+
+    res.setHeader("Set-Cookie", [
+      `truelayer_access_token=${tokenData.access_token}; HttpOnly; ${
+        isSecure ? "Secure;" : ""
+      } SameSite=${sameSite}; Max-Age=${tokenData.expires_in || 3600}; Path=/`,
+      `truelayer_refresh_token=${tokenData.refresh_token || ""}; HttpOnly; ${
+        isSecure ? "Secure;" : ""
+      } SameSite=${sameSite}; Max-Age=${7 * 24 * 3600}; Path=/`,
+    ]);
+
+    console.log("✅ Tokens stored in HTTP-only cookies");
+
+    return res.status(200).json({
+      success: true,
+      message: "Bank account connected successfully - tokens stored securely",
+    });
   } catch (error) {
     console.error("Function error:", error);
     return res.status(500).json({
       error: error.message,
-      stack: error.stack, // This will help debug
+      stack: error.stack,
     });
   }
 }

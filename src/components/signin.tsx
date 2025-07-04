@@ -15,7 +15,7 @@ const Signin = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  loading;
+  console.log(loading);
 
   // New states for password reset flow
   const [showResetForm, setShowResetForm] = useState<Boolean>(false);
