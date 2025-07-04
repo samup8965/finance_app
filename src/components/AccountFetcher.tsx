@@ -4,13 +4,10 @@ const AccountFetcher = () => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const response = await fetch(
-          "https://finance-app-steel-seven.vercel.app/api/accounts",
-          {
-            method: "GET",
-            credentials: "include", // for cookies
-          }
-        );
+        const response = await fetch("/api/accounts", {
+          method: "GET",
+          credentials: "include", // for cookies
+        });
 
         const data = await response.json();
 
