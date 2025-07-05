@@ -28,7 +28,6 @@ export default async function handler(req, res) {
   try {
     // Get the cookie from HTTP cookie
     const accessToken = req.cookies.truelayer_access_token;
-    console.log(accessToken);
 
     if (!accessToken) {
       return res.status(401).json({
@@ -36,16 +35,10 @@ export default async function handler(req, res) {
       });
     }
 
-    const { account_id } = req.query;
-    if (!account_id) {
-      return res.status(400).json({ error: "Missing account_id" });
-    }
+    // Need to get all accounts from accounts endpoint
 
-    console.log("Making request to TrueLayer API");
-
-    // Call TrueLayer API to get accounts
-    const response = await fetch(
-      `https://api.truelayer-sandbox.com/data/v1/accounts/${account_id}/transactions`,
+    const accountsResponse = await fetch(
+      "https://api.truelayer-sandbox.com/data/v1/accounts",
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -53,27 +46,89 @@ export default async function handler(req, res) {
       }
     );
 
-    const data = await response.json();
-    console.log("TrueLayer API response status", response.status);
+    const accountsData = await accountsResponse.json();
+    console.log("Accounts API response status", accountsResponse.status);
 
-    if (!response.ok) {
-      console.error("TrueLayer API error", data);
+    if (!accountsResponse.ok) {
+      console.error("TrueLayer Accounts API error", accountsData);
 
-      if (response.status === 401) {
+      if (accountsResponse.status === 401) {
         return res.status(401).json({
           error: "Token expired. Please reconnect your bank account",
         });
       }
-
       return res
-        .status(response.status)
-        .json({ error: data.error || "Failed to fetch transactions" });
+        .status(accountsResponse.status)
+        .json({ error: accountsData.error });
     }
 
-    console.log("✅ Successfully fetched balance");
-    return res.status(200).json(data);
+    // Now we extract those accounts
+
+    const accounts = accountsData.results || [];
+
+    if (accounts.length === 0) {
+      return res.status(404);
+    }
+
+    console.log(`Found ${accounts.length} accounts, fetching btransactions.`);
+
+    // Fetch the transaction Promises for each account
+
+    const transactionPromises = accounts.map(async (account) => {
+      try {
+        const transactionResponse = await fetch(
+          `https://api.truelayer-sandbox.com/data/v1/accounts/${account.account_id}/transactions`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        const transactionData = await transactionResponse.json();
+
+        if (!transactionResponse.ok) {
+          console.error(
+            `Balance API error for account ${account.account_id}`,
+            transactionData
+          );
+          return {
+            account_id: account.account_id,
+            account_number: account.account_number,
+            display_name: account.display_name,
+            error: transactionData.error || "Failed to fetch transactions",
+          };
+        }
+
+        return {
+          account_id: account.account_id,
+          account_number: account.account_number,
+          display_name: account.display_name,
+          balance: transactionData.results?.[0] || transactionData,
+        };
+      } catch (error) {
+        console.error(
+          `Error fetching transactions for account ${account.account_id}`,
+          error
+        );
+        return {
+          account_id: account.account_id,
+          account_number: account.account_number,
+          display_name: account.display_name,
+          error: "Internal server error",
+        };
+      }
+    });
+
+    // Wait for all those promises and their results
+
+    const transactionResults = await Promise.all(transactionPromises);
+    console.log("Successfully fetched balances");
+    return res.status(200).json({
+      accounts_with_balances: transactionResults,
+    });
   } catch (error) {
-    console.error("Error fetching transactions", error);
+    console.error("Error fetching balances", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }

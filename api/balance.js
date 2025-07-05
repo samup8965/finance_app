@@ -72,7 +72,7 @@ export default async function handler(req, res) {
 
     console.log(`Found ${accounts.length} accounts, fetching balances..`);
 
-    // Fetch the balances for each account
+    // Fetch the balance Promises for each account
 
     const balancePromises = accounts.map(async (account) => {
       try {
@@ -119,6 +119,8 @@ export default async function handler(req, res) {
         };
       }
     });
+
+    // Wait for all those promises and their results
 
     const balanceResults = await Promise.all(balancePromises);
     console.log("Successfully fetched balances");
