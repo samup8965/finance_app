@@ -28,7 +28,6 @@ export default async function handler(req, res) {
   try {
     // Get the cookie from HTTP cookie
     const accessToken = req.cookies.truelayer_access_token;
-    console.log(accessToken);
 
     if (!accessToken) {
       return res.status(401).json({
@@ -36,16 +35,10 @@ export default async function handler(req, res) {
       });
     }
 
-    const { account_id } = req.query;
-    if (!account_id) {
-      return res.status(400).json({ error: "Missing account_id" });
-    }
+    // Need to get all accounts from accounts endpoint
 
-    console.log("Making request to TrueLayer API");
-
-    // Call TrueLayer API to get accounts
-    const response = await fetch(
-      `https://api.truelayer-sandbox.com/data/v1/accounts/${account_id}/balance`,
+    const accountsResponse = await fetch(
+      "https://api.truelayer-sandbox.com/data/v1/accounts",
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -53,27 +46,102 @@ export default async function handler(req, res) {
       }
     );
 
-    const data = await response.json();
-    console.log("TrueLayer API response status", response.status);
+    const accountsData = await accountsResponse.json();
+    console.log("Accounts API response status", accountsResponse.status);
 
-    if (!response.ok) {
-      console.error("TrueLayer API error", data);
+    if (!accountsResponse.ok) {
+      console.error("TrueLayer Accounts API error", accountsData);
 
-      if (response.status === 401) {
+      if (accountsResponse.status === 401) {
         return res.status(401).json({
           error: "Token expired. Please reconnect your bank account",
         });
       }
-
       return res
-        .status(response.status)
-        .json({ error: data.error || "Failed to fetch balance" });
+        .status(accountsResponse.status)
+        .json({ error: accountsData.error });
     }
 
-    console.log("✅ Successfully fetched balance");
-    return res.status(200).json(data);
+    // Now we extract those accounts
+
+    const accounts = accountsData.results || [];
+
+    if (accounts.length === 0) {
+      return res.status(404);
+    }
+
+    console.log(`Found ${accounts.length} accounts, fetching balances..`);
+
+    // Fetch the balances for each account
+
+    const balancePromises = accounts.map(async (account) => {
+      try {
+        const balanceResponse = await fetch(
+          `https://api.truelayer-sandbox.com/data/v1/accounts/${account.account_id}/balance`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        const balanceData = await balanceResponse.json();
+
+        if (!balanceResponse.ok) {
+          console.error(
+            `Balance API error for account ${account.account_id}`,
+            balanceData
+          );
+          return {
+            account_id: account.account_id,
+            account_number: account.account_number,
+            display_name: account.display_name,
+            error: balanceData.error || "Failed to fetch balance",
+          };
+        }
+
+        return {
+          account_id: account.account_id,
+          account_number: account.account_number,
+          display_name: account.display_name,
+          balance: balanceData.results?.[0] || balanceData,
+        };
+      } catch (error) {
+        console.error(
+          `Error fetching balance for account ${account.account_id}`,
+          error
+        );
+        return {
+          account_id: account.account_id,
+          account_number: account.account_number,
+          display_name: account.display_name,
+          error: "Internal server error",
+        };
+      }
+    });
+
+    const balanceResults = await Promise.all(balancePromises);
+    console.log("Successfully fetched balances");
+    return res.status(200).json({
+      accounts_with_balances: balanceResults,
+    });
   } catch (error) {
-    console.error("Error fetching accounts", error);
+    console.error("Error fetching balances", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }
+
+/** Notes for myself
+ * 
+ * had to use async in map function because we do a HTTP request which returns a promise and we need await get a response without async cant use await
+ * 
+ * Each iteration of the map retuns a promise so we get an array of balancePromises
+ * 
+ Promise.all() takes an array of promises and waits for them all to complete and returns an array of their results concurrently
+
+ Why not use a for loop? It would be sequential while Promise.all() is concurrent 
+ * 
+ * 
+ * 
+ * 
+ */
