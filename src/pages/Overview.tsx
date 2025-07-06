@@ -1,4 +1,3 @@
-import AccountFetcher from "../components/AccountFetcher";
 import { earningData } from "../data/earningData";
 
 const Overview = () => {
@@ -224,7 +223,6 @@ const Overview = () => {
               <p className="text-xs text-gray-800 dark:text-gray-800 mt-1">
                 Interactive line chart
               </p>
-              <AccountFetcher />
             </div>
           </div>
         </div>

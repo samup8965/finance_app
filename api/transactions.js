@@ -70,7 +70,7 @@ export default async function handler(req, res) {
       return res.status(404);
     }
 
-    console.log(`Found ${accounts.length} accounts, fetching btransactions.`);
+    console.log(`Found ${accounts.length} accounts, fetching transactions.`);
 
     // Fetch the transaction Promises for each account
 
@@ -125,7 +125,7 @@ export default async function handler(req, res) {
     const transactionResults = await Promise.all(transactionPromises);
     console.log("Successfully fetched balances");
     return res.status(200).json({
-      accounts_with_balances: transactionResults,
+      accounts_with_transactions: transactionResults,
     });
   } catch (error) {
     console.error("Error fetching balances", error);
