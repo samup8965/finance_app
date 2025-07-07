@@ -3,10 +3,13 @@
 
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useStateContext } from "../context/ContextProvider";
 
 export const TrueLayerCallback = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams(); // Get the code parameters
+
+  const { setShouldFetchData } = useStateContext();
 
   const hasExchangedCode = useRef(false);
 
@@ -44,6 +47,8 @@ export const TrueLayerCallback = () => {
             console.log("Sucessful", data); // For now print
 
             setSearchParams({});
+            console.log("True layer setting fetch on for account and balances");
+            setShouldFetchData(true);
 
             navigate("/dashboard");
           } else {

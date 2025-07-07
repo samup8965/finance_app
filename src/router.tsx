@@ -7,7 +7,6 @@ import PrivateRoute from "./components/PrivateRoute";
 import ResetPassword from "./components/resetPassword";
 import { AuthContextProvider } from "./context/AuthContext";
 import { TrueLayerCallback } from "./components/TrueLayerCallback";
-import { DataProvider } from "./context/DataContext.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -28,12 +27,10 @@ export const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <DataProvider>
-        <PrivateRoute>
-          {" "}
-          <Dashboard />{" "}
-        </PrivateRoute>
-      </DataProvider>
+      <PrivateRoute>
+        {" "}
+        <Dashboard />{" "}
+      </PrivateRoute>
     ),
   },
 ]);

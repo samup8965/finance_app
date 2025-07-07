@@ -9,6 +9,8 @@ interface ContextType {
   setProfileClicked: React.Dispatch<React.SetStateAction<boolean>>;
   screenSize: number | undefined;
   setScreenSize: React.Dispatch<React.SetStateAction<number | undefined>>;
+  shouldFetchData: boolean;
+  setShouldFetchData: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const StateContext = createContext<ContextType>({
@@ -18,6 +20,8 @@ const StateContext = createContext<ContextType>({
   setProfileClicked: () => {},
   screenSize: undefined,
   setScreenSize: () => {},
+  shouldFetchData: false,
+  setShouldFetchData: () => {},
 });
 
 // Could implement initial state for further navugation features for now just doing profile
@@ -25,6 +29,7 @@ const StateContext = createContext<ContextType>({
 export const ContextProvider = ({ children }: { children: ReactNode }) => {
   const [activeMenu, setActiveMenu] = useState(true);
   const [profileClicked, setProfileClicked] = useState(false);
+  const [shouldFetchData, setShouldFetchData] = useState(false);
 
   const [screenSize, setScreenSize] = useState<number | undefined>(undefined);
 
@@ -37,6 +42,8 @@ export const ContextProvider = ({ children }: { children: ReactNode }) => {
         setProfileClicked,
         screenSize,
         setScreenSize,
+        shouldFetchData,
+        setShouldFetchData,
       }}
     >
       {children}

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { useEffect } from "react";
 import { type ReactNode } from "react";
+import { useStateContext } from "../context/ContextProvider";
 
 interface Account {
   account_id: string;
@@ -15,6 +16,7 @@ interface Transaction {
   description: string;
   date: string;
   transaction_type: string;
+  transaction_category: string;
   running_balance: number;
 }
 
@@ -53,13 +55,15 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [hasError, setError] = useState(false);
   const [lastUpdated, setUpdated] = useState("");
 
+  const { shouldFetchData, setShouldFetchData } = useStateContext();
+
   // API call to fetch the data
 
   const transformAccount = (rawAccount: any): Account => {
     return {
       account_id: rawAccount.account_id,
       display_name: rawAccount.display_name,
-      current_balance: rawAccount.running_balance.current,
+      current_balance: rawAccount.balance.current,
       currency: rawAccount.balance.currency,
     };
   };
@@ -67,18 +71,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const transformTransaction = (rawTransaction: any): Transaction => {
     return {
       transaction_id: rawTransaction.transaction_id,
-      amount: rawTransaction.amount,
-      description: rawTransaction.description,
-      date: rawTransaction.timestamp,
-      transaction_type: rawTransaction.transaction_type,
-      running_balance: rawTransaction.running_balance.amount,
+      amount: rawTransaction.balance.amount,
+      description: rawTransaction.balance.description,
+      date: rawTransaction.balance.timestamp,
+      transaction_type: rawTransaction.balance.transaction_type,
+      transaction_category: rawTransaction.balance.transaction_category,
+      running_balance: rawTransaction.balance.running_balance.amount,
     };
   };
 
   useEffect(() => {
     setError(false);
+    // Flow to prevent fetching
+    if (!shouldFetchData) {
+      console.log("Call has been blocked");
+      return;
+    }
     const fetchAccountData = async () => {
       try {
+        console.log("Call has been made");
         // Fetch transaction
         const transactionResponse = await fetch("/api/transactions", {
           method: "GET",
@@ -87,7 +98,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
         const transactionData = await transactionResponse.json();
 
-        const balanceResponse = await fetch("api/balance", {
+        const balanceResponse = await fetch("/api/balance", {
           method: "GET",
           credentials: "include",
         });
@@ -96,8 +107,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         if (!transactionResponse.ok || !balanceResponse.ok) {
           console.error(" Failed to fetch account data:", transactionData);
           setError(true);
+          setShouldFetchData(false);
+          setConnected(false);
           return;
         }
+        console.log("balance data", balanceData);
+
+        console.log("Transaction data", transactionData);
 
         // Transform and set state
         const transformedAccounts =
@@ -107,17 +123,20 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           transactionData.accounts_with_transactions.map(transformTransaction);
 
         setAccounts(transformedAccounts);
+        setConnected(true);
         setRecentTransactions(transformedTransactions);
-
-        console.log("Accounts data", transactionData);
+        setError(false);
+        console.log("Sucessfuly stored in correct format");
       } catch (err) {
         setError(true);
-        console.error("Network error: err");
+        setShouldFetchData(false);
+        setConnected(false);
+        console.error("Network error", err);
       }
     };
 
     fetchAccountData();
-  }, []);
+  }, [shouldFetchData]);
   return (
     <DataContext.Provider
       value={{

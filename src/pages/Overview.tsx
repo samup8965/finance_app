@@ -3,6 +3,7 @@ import { useDataContext } from "../context/DataContext";
 const Overview = () => {
   const { accounts, recentTransactions, isConnected, hasError, setError } =
     useDataContext();
+  console.log("The state for having an account connected is ", isConnected);
 
   // Helper function to render account balance section
 
@@ -87,7 +88,7 @@ const Overview = () => {
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold bg-blue-100 text-blue-600">
                   {" "}
-                  {"Place holder for transaction category"}
+                  {transaction.transaction_category}
                 </div>
                 <div>
                   <p className="font-medium text-gray-600">
