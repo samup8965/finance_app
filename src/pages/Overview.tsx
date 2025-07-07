@@ -1,6 +1,64 @@
-import { earningData } from "../data/earningData";
+import { useDataContext } from "../context/DataContext";
 
 const Overview = () => {
+  const { accounts, recentTransactions, isConnected, hasError } =
+    useDataContext();
+
+  // Helper function to render account balance section
+
+  const renderAccountBalance = () => (
+    <div className="mb-8">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg">
+        <div className="flex justify-between items-start">
+          <div>
+            <p className="text-blue-100 text-sm font-medium mb-2">
+              Total Balance
+            </p>
+            <p className="text-4xl font-bold mb-2">
+              {/**Using a ternary expression with template string to display dynamically */}
+
+              {isConnected && accounts.length > 0
+                ? `${
+                    accounts[0].currency === "GBP" ? "£" : "$"
+                  }${accounts[0].current_balance.toFixed(2)}`
+                : isConnected
+                ? "No accounts found"
+                : "Connect your account"}
+            </p>
+            <div className="flex items-center space-x-2">
+              {isConnected && accounts.length > 0 ? (
+                <>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <svg
+                      className="w-3 h-3 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    +2.5%
+                  </span>
+                  <span className="text-blue-100 text-sm">from last month</span>
+                </>
+              ) : (
+                <span className="text-blue-100 text-sm">
+                  {isConnected ? "No recent data" : "Connect to view trends"}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="container mx-auto mt-8 px-4 max-w-7xl">
       {/* Header */}
@@ -11,40 +69,6 @@ const Overview = () => {
         <p className="text-gray-600 dark:text-gray-400">
           Track your finances and monitor your spending
         </p>
-      </div>
-
-      {/* Account Balance Card */}
-      <div className="mb-8">
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-blue-100 text-sm font-medium mb-2">
-                Total Balance
-              </p>
-              <p className="text-4xl font-bold mb-2">$100,000.00</p>
-              <div className="flex items-center space-x-2">
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  <svg
-                    className="w-3 h-3 mr-1"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  +2.5%
-                </span>
-                <span className="text-blue-100 text-sm">from last month</span>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center"></div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Main Content Grid */}
