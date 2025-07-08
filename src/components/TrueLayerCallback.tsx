@@ -11,7 +11,7 @@ export const TrueLayerCallback = () => {
   const [searchParams, setSearchParams] = useSearchParams(); // Get the code parameters
 
   const { setShouldFetchData } = useStateContext();
-  const { isConnected, setConnected, loaded } = useDataContext();
+  const { isConnected, setConnected, loaded, setError } = useDataContext();
 
   const hasExchangedCode = useRef(false);
 
@@ -55,12 +55,14 @@ export const TrueLayerCallback = () => {
           } else {
             console.error("Token exhange failed:", data);
             setConnected(false);
+            setError(true);
             setSearchParams({});
             navigate("/dashboard");
           }
         } catch (error) {
           console.error("Network error:", error);
           setConnected(false);
+          setError(true);
 
           setSearchParams({});
           navigate("/dashboard");

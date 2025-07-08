@@ -8,6 +8,8 @@ interface Account {
   display_name: string;
   current_balance: number;
   currency: string;
+  sort_code: number;
+  account_number: number;
 }
 
 interface Transaction {
@@ -70,6 +72,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       display_name: rawAccount.display_name,
       current_balance: rawAccount.balance.current,
       currency: rawAccount.balance.currency,
+      sort_code: rawAccount.account_number.sort_code,
+      account_number: rawAccount.account_number.number,
     };
   };
 
@@ -119,6 +123,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         console.log("balance data", balanceData);
 
         console.log("Transaction data", transactionData);
+
+        setShouldFetchData(false);
 
         // Transform and set state
         const transformedAccounts =

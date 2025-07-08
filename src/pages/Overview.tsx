@@ -1,15 +1,73 @@
 import { useDataContext } from "../context/DataContext";
+import {
+  FaUniversity, // ATM
+  FaFileInvoiceDollar, // BILL_PAYMENT
+  FaCashRegister, // CASH
+  FaGift, // CASHBACK
+  FaFileSignature, // CHEQUE
+  FaEdit, // CORRECTION
+  FaPlusCircle, // CREDIT
+  FaRedoAlt, // DIRECT_DEBIT
+  FaChartLine, // DIVIDEND
+  FaMoneyBillWave, // FEE_CHARGE
+  FaPercentage, // INTEREST
+  FaQuestionCircle, // OTHER
+  FaShoppingCart, // PURCHASE
+  FaSyncAlt, // STANDING_ORDER
+  FaExchangeAlt, // TRANSFER
+  FaMinusCircle, // DEBIT
+  FaQuestion, // UNKNOWN
+} from "react-icons/fa";
 
 const Overview = () => {
   const { accounts, recentTransactions, isConnected, hasError, setError } =
     useDataContext();
   console.log("The state for having an account connected is ", isConnected);
 
+  type CategoryKey =
+    | "ATM"
+    | "BILL_PAYMENT"
+    | "CASH"
+    | "CASHBACK"
+    | "CHEQUE"
+    | "CORRECTION"
+    | "CREDIT"
+    | "DIRECT_DEBIT"
+    | "DIVIDEND"
+    | "FEE_CHARGE"
+    | "INTEREST"
+    | "OTHER"
+    | "PURCHASE"
+    | "STANDING_ORDER"
+    | "TRANSFER"
+    | "DEBIT"
+    | "UNKNOWN";
+
+  const categoryIcons = {
+    ATM: <FaUniversity className="text-blue-600" />,
+    BILL_PAYMENT: <FaFileInvoiceDollar className="text-indigo-600" />,
+    CASH: <FaCashRegister className="text-green-600" />,
+    CASHBACK: <FaGift className="text-pink-600" />,
+    CHEQUE: <FaFileSignature className="text-yellow-600" />,
+    CORRECTION: <FaEdit className="text-red-600" />,
+    CREDIT: <FaPlusCircle className="text-green-700" />,
+    DIRECT_DEBIT: <FaRedoAlt className="text-purple-600" />,
+    DIVIDEND: <FaChartLine className="text-teal-600" />,
+    FEE_CHARGE: <FaMoneyBillWave className="text-red-500" />,
+    INTEREST: <FaPercentage className="text-yellow-700" />,
+    OTHER: <FaQuestionCircle className="text-gray-500" />,
+    PURCHASE: <FaShoppingCart className="text-blue-500" />,
+    STANDING_ORDER: <FaSyncAlt className="text-indigo-700" />,
+    TRANSFER: <FaExchangeAlt className="text-purple-700" />,
+    DEBIT: <FaMinusCircle className="text-red-700" />,
+    UNKNOWN: <FaQuestion className="text-gray-400" />,
+  };
+
   // Helper function to render account balance section
 
   const renderAccountBalance = () => (
     <div className="mb-8">
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg max-w-6xl">
         <div className="flex justify-between items-start">
           <div>
             <p className="text-blue-100 text-sm font-medium mb-2">
@@ -28,26 +86,21 @@ const Overview = () => {
             </p>
             <div className="flex items-center space-x-2">
               {isConnected && accounts.length > 0 ? (
-                <>
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <svg
-                      className="w-3 h-3 mr-1"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    +2.5%
+                <div className="mt-2 text-sm text-blue-100">
+                  <span className="mr-4">
+                    <span className="font-medium text-white">Sort Code:</span>{" "}
+                    {accounts[0].sort_code}
                   </span>
-                  <span className="text-blue-100 text-sm">from last month</span>
-                </>
+                  <span>
+                    <span className="font-medium text-white">
+                      Account Number:
+                    </span>{" "}
+                    {accounts[0].account_number}
+                  </span>
+                </div>
               ) : (
                 <span className="text-blue-100 text-sm">
-                  {isConnected ? "No recent data" : "Connect to view trends"}
+                  {isConnected ? "No recent data" : ""}
                 </span>
               )}
             </div>
@@ -57,76 +110,82 @@ const Overview = () => {
     </div>
   );
 
-  // Helper to render recent transactions
   const renderRecentTransactions = () => (
-    <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 ">
+    <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow border border-gray-100">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h3 className="text-xl font-semibold text-gray-900">
             Recent Transactions
           </h3>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500">
             {isConnected
-              ? "Your latest financial activity"
+              ? "A snapshot of your latest activity"
               : "Connect your account to view transactions"}
           </p>
         </div>
         {isConnected && recentTransactions.length > 0 && (
-          <button className="text-blue-600 text-sm font-medium hover:text-blue-700 transition-colors">
+          <button className="text-sm font-medium text-blue-600 hover:underline">
             View all
           </button>
         )}
       </div>
 
-      <div className="space-y-4">
-        {isConnected && recentTransactions.length > 0 ? (
-          recentTransactions.slice(0, 4).map((transaction, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100"
-            >
+      {isConnected && recentTransactions.length > 0 ? (
+        <ul className="divide-y divide-gray-200">
+          {recentTransactions.slice(0, 4).map((transaction, index) => (
+            <li key={index} className="py-4 flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold bg-blue-100 text-blue-600">
-                  {" "}
-                  {transaction.transaction_category}
+                {/* Circle Icon with initials or category */}
+                <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
+                  {/* We use as CategoryKey because we know its one of those we*/}
+                  {categoryIcons[
+                    transaction.transaction_category as CategoryKey
+                  ] ?? categoryIcons.UNKNOWN}
                 </div>
+
+                {/* Transaction Info */}
                 <div>
-                  <p className="font-medium text-gray-600">
+                  <p className="text-sm font-medium text-gray-900">
                     {transaction.description}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(transaction.date).toLocaleDateString()}
+                  <p className="text-xs text-gray-500">
+                    {new Date(transaction.date).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </p>
                 </div>
               </div>
 
+              {/* Amount */}
               <div className="text-right">
                 <p
-                  className={`font-semibold text-lg ${
-                    transaction.amount > 0 ? "text-green-600" : "text-red-600"
+                  className={`text-sm font-semibold ${
+                    transaction.amount > 0 ? "text-green-600" : "text-red-500"
                   }`}
                 >
-                  {transaction.amount > 0 ? "+" : ""}$
+                  {transaction.amount > 0 ? "+" : "-"}$
                   {Math.abs(transaction.amount).toFixed(2)}
                 </p>
               </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-gray-400 text-2xl">
-                {isConnected ? "📄" : "🔗"}
-              </span>
-            </div>
-            <p className="text-gray-600 font-medium">
-              {isConnected
-                ? "Your transactions will appear here"
-                : "Link your bank account to view transactions"}
-            </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-gray-400 text-2xl">
+              {isConnected ? "📄" : "🔗"}
+            </span>
           </div>
-        )}
-      </div>
+          <p className="text-gray-600 font-medium">
+            {isConnected
+              ? "Your transactions will appear here"
+              : "Link your bank account to view transactions"}
+          </p>
+        </div>
+      )}
     </div>
   );
 
@@ -224,30 +283,30 @@ const Overview = () => {
     </div>
   );
 
-  if (hasError) {
-    return (
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-800 px-6 py-4 rounded-lg shadow-md z-50 flex items-center justify-between w-[90%] max-w-xl">
-        <div className="flex items-center space-x-2">
-          <span className="text-xl">⚠️</span>
-          <span className="font-medium">{hasError}</span>
-        </div>
-        <button
-          onClick={() => setError(false)}
-          className="ml-4 text-red-600 hover:text-red-800 transition"
-        >
-          ✕
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className=" mx-auto mt-8 px-4 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white-600">
+    <div className="mx-auto mt-8 px-4 max-w-7xl">
+      {hasError && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-800 px-6 py-4 rounded-lg shadow-md z-50 flex items-center justify-between w-[90%] max-w-xl">
+          <div className="flex items-center space-x-2">
+            <span className="text-xl">⚠️</span>
+            <span className="font-medium">
+              There has been an error connecting your account. Please try again
+            </span>
+          </div>
+          <button
+            onClick={() => setError(false)}
+            className="ml-4 text-red-600 hover:text-red-800 transition"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      <div className="mb-8 ">
+        <h1 className="text-2xl font-bold text-white-900">
           Financial Overview
         </h1>
-        <p className="text-white-600">
+        <p className="text-gray-600">
           {isConnected
             ? "Track your finances and monitor your spending"
             : "Connect your account to start tracking your finances"}
@@ -256,17 +315,18 @@ const Overview = () => {
 
       {renderAccountBalance()}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {renderRecentTransactions()}
-      </div>
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl">
+        {/* Left side: Summary + Goal */}
+        <div className="lg:col-span-2 space-y-6">
+          {renderRecentTransactions()}
+        </div>
 
-      {/* Quick Stats Sidebar */}
-      <div className="space-y-6 py-8">
-        {/* Monthly Summary */}
-        {renderMonthlySummary()}
-
-        {renderSavingsGoal()}
-      </div>
+        {/* Right side: Transactions */}
+        <div className="lg:col-span-1 space-y-6">
+          {renderMonthlySummary()}
+          {renderSavingsGoal()}
+        </div>
+      </section>
     </div>
   );
 };
