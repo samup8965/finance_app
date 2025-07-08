@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     console.log("Token exchange request body:", requestBody.toString());
 
     const tokenResponse = await fetch(
-      "https://auth.truelayer-sandbox.com/connect/token",
+      "https://auth.truelayer.com/connect/token",
       {
         method: "POST",
         headers: {
