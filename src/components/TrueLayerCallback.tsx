@@ -4,12 +4,14 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
+import { useDataContext } from "../context/DataContext";
 
 export const TrueLayerCallback = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams(); // Get the code parameters
 
   const { setShouldFetchData } = useStateContext();
+  const { isConnected, setConnected, loaded } = useDataContext();
 
   const hasExchangedCode = useRef(false);
 
@@ -44,20 +46,21 @@ export const TrueLayerCallback = () => {
 
           if (response.ok) {
             // Sucess need to store access tokens
+            setConnected(true);
             console.log("Sucessful", data); // For now print
 
             setSearchParams({});
             console.log("True layer setting fetch on for account and balances");
             setShouldFetchData(true);
-
-            navigate("/dashboard");
           } else {
             console.error("Token exhange failed:", data);
+            setConnected(false);
             setSearchParams({});
             navigate("/dashboard");
           }
         } catch (error) {
           console.error("Network error:", error);
+          setConnected(false);
 
           setSearchParams({});
           navigate("/dashboard");
@@ -67,6 +70,13 @@ export const TrueLayerCallback = () => {
 
     handleCallback();
   }, [searchParams, navigate]);
+
+  // Handling sucessful navigation only after connection and loaded data
+  useEffect(() => {
+    if (loaded && isConnected) {
+      navigate("/dashboard");
+    }
+  }, [loaded, isConnected]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

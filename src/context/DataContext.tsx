@@ -28,6 +28,8 @@ interface DataType {
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   lastUpdated: string | null;
   setUpdated: React.Dispatch<React.SetStateAction<string>>;
+  loaded: boolean;
+  setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
 
   // Data
   accounts: Account[];
@@ -43,6 +45,8 @@ const DataContext = createContext<DataType>({
   setUpdated: () => {},
   accounts: [],
   recentTransactions: [],
+  loaded: false,
+  setLoaded: () => {},
 });
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
@@ -53,6 +57,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   );
   const [isConnected, setConnected] = useState(false);
   const [hasError, setError] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [lastUpdated, setUpdated] = useState("");
 
   const { shouldFetchData, setShouldFetchData } = useStateContext();
@@ -107,8 +112,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         if (!transactionResponse.ok || !balanceResponse.ok) {
           console.error(" Failed to fetch account data:", transactionData);
           setError(true);
+          setLoaded(true);
           setShouldFetchData(false);
-          setConnected(false);
           return;
         }
         console.log("balance data", balanceData);
@@ -123,14 +128,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           transactionData.accounts_with_transactions.map(transformTransaction);
 
         setAccounts(transformedAccounts);
-        setConnected(true);
         setRecentTransactions(transformedTransactions);
+        setLoaded(true);
         setError(false);
         console.log("Sucessfuly stored in correct format");
       } catch (err) {
         setError(true);
         setShouldFetchData(false);
-        setConnected(false);
         console.error("Network error", err);
       }
     };
@@ -148,6 +152,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         setUpdated,
         accounts,
         recentTransactions,
+        loaded,
+        setLoaded,
       }}
     >
       {children}
