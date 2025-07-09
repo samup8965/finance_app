@@ -19,7 +19,6 @@ interface Transaction {
   date: string;
   transaction_type: string;
   transaction_category: string;
-  running_balance: number;
 }
 
 interface DataType {
@@ -85,7 +84,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       date: rawTransaction.balance.timestamp,
       transaction_type: rawTransaction.balance.transaction_type,
       transaction_category: rawTransaction.balance.transaction_category,
-      running_balance: rawTransaction.balance.running_balance.amount,
     };
   };
 

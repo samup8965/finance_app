@@ -104,7 +104,7 @@ export default async function handler(req, res) {
           account_id: account.account_id,
           account_number: account.account_number,
           display_name: account.display_name,
-          balance: balanceData.results?.[0] || balanceData,
+          balance: balanceData.results || balanceData,
         };
       } catch (error) {
         console.error(
