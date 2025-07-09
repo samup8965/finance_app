@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     // Need to get all accounts from accounts endpoint
 
     const accountsResponse = await fetch(
-      "https://api.truelayer-sandbox.com/data/v1/accounts",
+      "https://api.truelayer.com/data/v1/accounts",
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
