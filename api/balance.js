@@ -77,7 +77,7 @@ export default async function handler(req, res) {
     const balancePromises = accounts.map(async (account) => {
       try {
         const balanceResponse = await fetch(
-          `https://api.truelayer-sandbox.com/data/v1/accounts/${account.account_id}/balance`,
+          `https://api.truelayer.com/data/v1/accounts/${account.account_id}/balance`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
