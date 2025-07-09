@@ -126,7 +126,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       } else if (_event === "PASSWORD_RECOVERY") {
         console.log("🔒 Password recovery flow started.");
       } else {
-        console.log("ℹ️ Other event:", event);
+        console.log("ℹ️ Other event:", _event);
       }
     });
 

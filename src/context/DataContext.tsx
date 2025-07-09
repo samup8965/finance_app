@@ -13,7 +13,6 @@ interface Account {
 }
 
 interface Transaction {
-  transaction_id: string;
   amount: number;
   description: string;
   date: string;
@@ -69,8 +68,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     return {
       account_id: rawAccount.account_id,
       display_name: rawAccount.display_name,
-      current_balance: rawAccount.balance.current,
-      currency: rawAccount.balance.currency,
+      current_balance: rawAccount.balance[0].current,
+      currency: rawAccount.balance[0].currency,
       sort_code: rawAccount.account_number.sort_code,
       account_number: rawAccount.account_number.number,
     };
@@ -78,12 +77,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   const transformTransaction = (rawTransaction: any): Transaction => {
     return {
-      transaction_id: rawTransaction.transaction_id,
-      amount: rawTransaction.balance.amount,
-      description: rawTransaction.balance.description,
-      date: rawTransaction.balance.timestamp,
-      transaction_type: rawTransaction.balance.transaction_type,
-      transaction_category: rawTransaction.balance.transaction_category,
+      amount: rawTransaction.amount,
+      description: rawTransaction.description,
+      date: rawTransaction.timestamp,
+      transaction_type: rawTransaction.transaction_type,
+      transaction_category: rawTransaction.transaction_category,
     };
   };
 
@@ -129,7 +127,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           balanceData.accounts_with_balances.map(transformAccount);
 
         const transformedTransactions =
-          transactionData.accounts_with_transactions.map(transformTransaction);
+          transactionData.accounts_with_transactions[0].transactions.map(
+            transformTransaction
+          );
 
         setAccounts(transformedAccounts);
         setRecentTransactions(transformedTransactions);
