@@ -12,7 +12,7 @@ interface Account {
   account_number: number;
 }
 
-interface Transaction {
+export interface Transaction {
   amount: number;
   description: string;
   date: string;

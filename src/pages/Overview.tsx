@@ -1,11 +1,13 @@
 import { useDataContext } from "../context/DataContext";
 import { categoryIcons } from "../assets/Icons";
 import { type CategoryKey } from "../types/CategoryKey";
+import { useNavigate } from "react-router-dom";
 
 const Overview = () => {
   const { accounts, recentTransactions, isConnected, hasError, setError } =
     useDataContext();
   console.log("The state for having an account connected is ", isConnected);
+  const navigate = useNavigate();
 
   // Helper function to render account balance section
 
@@ -68,7 +70,10 @@ const Overview = () => {
           </p>
         </div>
         {isConnected && recentTransactions.length > 0 && (
-          <button className="text-sm font-medium text-blue-600 hover:underline">
+          <button
+            className="text-sm font-medium text-blue-600 hover:underline"
+            onClick={() => navigate("/transactions")}
+          >
             View all
           </button>
         )}

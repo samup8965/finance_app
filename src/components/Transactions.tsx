@@ -1,15 +1,68 @@
 import { useDataContext } from "../context/DataContext";
+import { type Transaction } from "../context/DataContext";
 import { categoryIcons } from "../assets/Icons";
 import { type CategoryKey } from "../types/CategoryKey";
 import { SideBar } from "./SideBar";
 import { useStateContext } from "../context/ContextProvider";
 import { Navbar } from "./Navbar";
+import { useState, useEffect } from "react";
 
 const Transactions = () => {
-  const { recentTransactions, isConnected } = useDataContext();
   const { activeMenu } = useStateContext();
 
   const Alltransactions = () => {
+    const { recentTransactions, isConnected } = useDataContext();
+
+    // States for search bar
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [filteredTransactions, setFilteredTransactions] =
+      useState<Transaction[]>(recentTransactions);
+
+    const searchTransactions = (
+      transactions: Transaction[],
+      searchTerm: string
+    ) => {
+      // If nothing is there just show the entire list
+      if (!searchTerm.trim()) {
+        return transactions;
+      }
+
+      const lowerSearchTerm = searchTerm.toLowerCase();
+
+      return transactions.filter((transaction) => {
+        // Searching in description (case insensitive, partial match)
+        const descriptionMatch = transaction.description
+          .toLowerCase()
+          .includes(lowerSearchTerm);
+
+        // Search in amount (handle pound symbols and decimals)
+
+        const amountString = Math.abs(transaction.amount).toString();
+        const amountMatch = amountString.includes(lowerSearchTerm);
+
+        return descriptionMatch || amountMatch;
+      });
+    };
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearchTerm(value);
+
+      // Filter transactions based on search
+      const filtered = searchTransactions(recentTransactions, value);
+      setFilteredTransactions(filtered);
+    };
+
+    // Debounding search effect
+    useEffect(() => {
+      const timeoutId = setTimeout(() => {
+        const filtered = searchTransactions(recentTransactions, searchTerm);
+        setFilteredTransactions(filtered);
+      }, 300);
+
+      return () => clearTimeout(timeoutId);
+    }, [searchTerm, recentTransactions]);
+
     return (
       <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl mx-auto p-6 my-8 min-h-[600px]">
         {/* Header Section */}
@@ -41,6 +94,8 @@ const Transactions = () => {
                     type="text"
                     placeholder="Search transactions..."
                     className="w-48 px-3 py-2 text-sm border border-gray-200 rounded-lg  focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <span className="">🔍</span>
@@ -55,7 +110,7 @@ const Transactions = () => {
         <div className="px-8 py-6 overflow-hidden max-h-96 overflow-y-auto pr-2 -mr-2">
           {isConnected && recentTransactions.length > 0 ? (
             <div className="space-y-4  max-h-full flex-shrink-0">
-              {recentTransactions.map((transaction, index) => (
+              {filteredTransactions.map((transaction, index) => (
                 <div
                   key={index}
                   className="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition-colors duration-200"
