@@ -17,6 +17,7 @@ const Transactions = () => {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [filteredTransactions, setFilteredTransactions] =
       useState<Transaction[]>(recentTransactions);
+    const [sortOption, setSortOption] = useState<string>("date-desc");
 
     const searchTransactions = (
       transactions: Transaction[],
@@ -47,21 +48,64 @@ const Transactions = () => {
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setSearchTerm(value);
-
-      // Filter transactions based on search
-      const filtered = searchTransactions(recentTransactions, value);
-      setFilteredTransactions(filtered);
     };
 
-    // Debounding search effect
+    const sortTransactions = (
+      transactions: Transaction[],
+      sortOption: string
+    ): Transaction[] => {
+      // Take original list
+      const sorted = [...transactions]; //Clone not to affect the original list
+
+      switch (sortOption) {
+        case "date-desc":
+          return sorted.sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+
+        case "date-asc":
+          return sorted.sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+          );
+
+        case "amount-desc":
+          return sorted.sort((a, b) => {
+            const diff = Math.abs(b.amount) - Math.abs(a.amount);
+            if (diff !== 0) {
+              return diff;
+            }
+            return new Date(b.date).getTime() - new Date(a.date).getTime();
+          });
+
+        case "amount-asc":
+          return sorted.sort((a, b) => {
+            const diff = Math.abs(a.amount) - Math.abs(b.amount);
+            if (diff !== 0) {
+              return diff;
+            }
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          });
+
+        default:
+          return sorted;
+      }
+    };
+    // To know which option in the drop down
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSortOption(e.target.value);
+    };
+
+    // Activate sort when user changes dropdown or transactions/search changes
+
     useEffect(() => {
-      const timeoutId = setTimeout(() => {
+      const timeOutId = setTimeout(() => {
         const filtered = searchTransactions(recentTransactions, searchTerm);
-        setFilteredTransactions(filtered);
+        const sorted = sortTransactions(filtered, sortOption);
+        setFilteredTransactions(sorted);
       }, 300);
 
-      return () => clearTimeout(timeoutId);
-    }, [searchTerm, recentTransactions]);
+      return () => clearTimeout(timeOutId);
+    }, [searchTerm, sortOption, recentTransactions]);
 
     return (
       <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl mx-auto p-6 my-8 min-h-[600px]">
@@ -80,7 +124,11 @@ const Transactions = () => {
             </div>
             {isConnected && recentTransactions.length > 0 && (
               <div className="flex items-center space-x-3">
-                <select className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-black">
+                <select
+                  value={sortOption}
+                  onChange={handleSortChange}
+                  className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-black"
+                >
                   <option value="date-desc">Latest First</option>
                   <option value="date-asc">Oldest First</option>
                   <option value="amount-desc">Highest Amount</option>
