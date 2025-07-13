@@ -64,7 +64,7 @@ export const links: SidebarSection[] = [
     title: "Planning",
     links: [
       {
-        name: "savings-goals",
+        name: "savingGoals",
         icon: <FaPiggyBank />,
       },
       {

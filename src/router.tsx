@@ -8,6 +8,7 @@ import ResetPassword from "./components/resetPassword";
 import { AuthContextProvider } from "./context/AuthContext";
 import { TrueLayerCallback } from "./components/TrueLayerCallback";
 import Transactions from "./components/Transactions";
+import { SavingGoals } from "./pages/savingGoals";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
     path: "/truelayercallback",
     element: <TrueLayerCallback />,
   },
+  { path: "/savingGoals", element: <SavingGoals /> },
   { path: "/transactions", element: <Transactions /> },
   {
     path: "/dashboard",

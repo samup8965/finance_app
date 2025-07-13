@@ -133,7 +133,6 @@ const Transactions = () => {
                   <option value="date-asc">Oldest First</option>
                   <option value="amount-desc">Highest Amount</option>
                   <option value="amount-asc">Lowest Amount</option>
-                  <option value="category">Category A-Z</option>
                 </select>
 
                 {/* Search Input */}
