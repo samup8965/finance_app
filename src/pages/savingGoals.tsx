@@ -21,7 +21,7 @@ export const SavingGoals = () => {
       // Select all columns order by created at - newest first
 
       const { data, error } = await supabase
-        .from("saving_goals")
+        .from("savings_goals")
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -44,20 +44,34 @@ export const SavingGoals = () => {
     try {
       setSubmitting(true); // Diable the form maybe show creating
 
-      // Here we are inserting an new row square brackets due to supabase docs expects array of rows
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      console.log("Current user:", user);
+
+      // Here we are inserting a new row square brackets due to supabase docs expects array of rows
       //.select - so after inserting return the full list
-      const { data, error } = await supabase
-        .from("savings_goals")
-        .insert([goalData])
-        .select();
+      if (user != null) {
+        const { data, error } = await supabase
+          .from("savings_goals")
+          .insert([
+            {
+              ...goalData,
+              user_id: user.id,
+            },
+          ])
+          .select();
 
-      if (error) throw error;
+        if (error) throw error;
 
-      // Check if data exists so not null or anything and also check its not empty
-      if (data && data[0]) {
-        // Use prev to take previous most up to date state
-        setGoals((prev) => [data[0], ...prev]);
-        setShowAddForm(false);
+        // Check if data exists so not null or anything and also check its not empty
+        if (data && data[0]) {
+          // Use prev to take previous most up to date state
+          setGoals((prev) => [data[0], ...prev]);
+          setShowAddForm(false);
+        }
+      } else {
+        setError("User id is null try logging in again");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create goal");
@@ -121,7 +135,7 @@ export const SavingGoals = () => {
 
   return (
     <div className="flex items-center justify-between mb-6">
-      <h1 className="text-2xl font-bold text-gray-900">Savings Goals</h1>
+      <h1 className="text-2xl font-bold text-white-900">Savings Goals</h1>
       <button
         onClick={() => setShowAddForm(!showAddForm)}
         className="bg-blue-600 text-whitepx-4 py-2 rounded-lg hover: bg-purple-700 transition-colors"
