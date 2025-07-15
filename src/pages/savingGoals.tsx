@@ -125,6 +125,31 @@ export const SavingGoals = () => {
     setEditingGoalId(id);
   };
 
+  const handleUpdateSavedAmount = async (goalId: string, newAmount: number) => {
+    try {
+      const { error } = await supabase
+        .from("saving_goals")
+        .update({ saved_amount: newAmount })
+        .eq("id", goalId)
+        .select();
+
+      if (error) {
+        throw error;
+      }
+
+      // Update local state
+      setGoals((prevGoals) =>
+        prevGoals.map((goal) =>
+          goal.id === goalId ? { ...goal, saved_amount: newAmount } : goal
+        )
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Falied to update saved amount"
+      );
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -207,6 +232,7 @@ export const SavingGoals = () => {
                   goal={goal}
                   onEdit={handleEditGoal}
                   onDelete={handleDeleteGoal}
+                  onUpdateSavedAmount={handleUpdateSavedAmount}
                   isEditing={editingGoalId === goal.id}
                   onEditToggle={handleEditToggle}
                 />

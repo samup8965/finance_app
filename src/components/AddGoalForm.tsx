@@ -54,11 +54,14 @@ export const AddGoalForm: React.FC<AddGoalFormProps> = ({
 
     if (!validateForm()) return;
 
+    const today = new Date().toISOString().split("T")[0];
+
     const goalData: NewSavingsGoal = {
       goal_name: formData.goal_name.trim(),
       target_amount: Number(formData.target_amount),
       saved_amount: 0, // Start with 0 saved
       deadline: formData.deadline || null,
+      created_at: today,
     };
 
     await onSubmit(goalData);
@@ -86,7 +89,9 @@ export const AddGoalForm: React.FC<AddGoalFormProps> = ({
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6 shadow-sm">
-      <h2 className="text-lg font-semibold mb-4">Create New Savings Goal</h2>
+      <h2 className="text-lg font-semibold mb-4 text-black">
+        Create New Savings Goal
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Goal Name */}

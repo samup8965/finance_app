@@ -13,6 +13,7 @@ export interface NewSavingsGoal {
   goal_name: string;
   target_amount: number;
   saved_amount: number;
+  created_at: string;
   deadline: string | null;
 }
 
@@ -29,6 +30,7 @@ export interface GoalCardProps {
   goal: SavingsGoal;
   onEdit: (id: string, updates: Partial<SavingsGoal>) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onUpdateSavedAmount: (id: string, amount: number) => Promise<void>;
   isEditing: boolean;
   onEditToggle: (id: string | null) => void;
 }

@@ -7,6 +7,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
   onEdit,
   onDelete,
   isEditing,
+  onUpdateSavedAmount,
   onEditToggle,
 }) => {
   const [editValues, setEditValues] = useState({
@@ -14,6 +15,11 @@ export const GoalCard: React.FC<GoalCardProps> = ({
     target_amount: goal.target_amount.toString(),
     deadline: goal.deadline || "",
   });
+
+  const [isEditingSavedAmount, setIsEditingSavedAmount] = useState(false);
+  const [tempSavedAmount, setTempSavedAmount] = useState(
+    goal.saved_amount.toString()
+  );
 
   const progressPercentage = Math.min(
     (goal.saved_amount / goal.target_amount) * 100,
@@ -76,6 +82,26 @@ export const GoalCard: React.FC<GoalCardProps> = ({
 
   const handleDelete = () => {
     onDelete(goal.id);
+  };
+
+  // Handling the editing of saved amount
+
+  const handleSavedAMountEditStart = () => {
+    setTempSavedAmount(goal.saved_amount.toString());
+    setIsEditingSavedAmount(true);
+  };
+
+  const handleSavedAmountSave = async () => {
+    const newAmount = Number(tempSavedAmount);
+    if (newAmount !== goal.saved_amount && newAmount >= 0) {
+      await onUpdateSavedAmount(goal.id, newAmount);
+    }
+    setIsEditingSavedAmount(false);
+  };
+
+  const handleSavedAmountCancel = () => {
+    setTempSavedAmount(goal.saved_amount.toString());
+    setIsEditingSavedAmount(false);
   };
 
   return (
