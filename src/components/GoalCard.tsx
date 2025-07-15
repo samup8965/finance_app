@@ -172,35 +172,71 @@ export const GoalCard: React.FC<GoalCardProps> = ({
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium text-gray-700">Progress</span>
-          <span className="text-sm text-gray-600">
-            {formatCurrency(goal.saved_amount)} of{" "}
-            {formatCurrency(goal.target_amount)}
-          </span>
-        </div>
+          {isEditingSavedAmount ? (
+            <div className="flex items-center gap-1">
+              <input
+                type="number"
+                value={tempSavedAmount}
+                onChange={(e) => setTempSavedAmount(e.target.value)}
+                className="text-sm text-gray-900 bg-transparent border-b border-gray-300 focus:outline-none focus:border-blue-500 text-right w-20"
+                min="0"
+                step="0.01"
+                autoFocus
+              />
 
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div
-            className={`h-3 rounded-full transition-all duration-300 ${
-              isOverdue ? "bg-orange-500" : "bg-blue-600"
-            }`}
-            style={{ width: `${progressPercentage}%` }}
-          />
-        </div>
+              <span className="text-sm text-gray-600">
+                {" "}
+                of {formatCurrency(goal.target_amount)}
+              </span>
+              <button
+                onClick={handleSavedAmountSave}
+                className="p-1 text-green-600 hover:text-green-800 transition-colors"
+                title="Save progress"
+              >
+                <Check size={14} />
+              </button>
 
-        <div className="flex justify-between items-center mt-1">
-          <span className="text-xs text-gray-500">
-            {progressPercentage.toFixed(1)}% complete
-          </span>
-          {goal.target_amount > goal.saved_amount && (
-            <span className="text-xs text-gray-500">
-              {formatCurrency(goal.target_amount - goal.saved_amount)} remaining
-            </span>
+              <button
+                onClick={handleSavedAmountCancel}
+                className="p-1 text-gray-600 hover:text-gray-800 transition-colors"
+                title="Cancel"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ) : (
+            <div className="flex iems-center gap-1">
+              <span className="text-sm text-gray-600">
+                {formatCurrency(goal.saved_amount)} of{" "}
+                {formatCurrency(goal.target_amount)}
+              </span>
+
+              <button
+                onClick={handleSavedAMountEditStart}
+                className="p-1 text-gray-600 hover:text-gray-800 transition-colors"
+                title="Edit progress"
+              >
+                <Edit3 size={14} />
+              </button>
+            </div>
           )}
         </div>
       </div>
 
+      {/*Progress Section*/}
+
+      <div className="w-full bg-gray-200 rounded-full h-3">
+        <div
+          className="h-3 rounded-full bg-blue-600 transition-all duration-300"
+          style={{ width: `${progressPercentage}%` }}
+        />
+      </div>
+
       {/* Details Section */}
-      <div className="space-y-2">
+      <div
+        className="space-y-2 py-4
+      "
+      >
         {/* Target Amount (editable) */}
         <div className="flex justify-between items-center">
           <span className="text-sm text-gray-600">Target:</span>

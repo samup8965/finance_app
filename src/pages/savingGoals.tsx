@@ -128,7 +128,7 @@ export const SavingGoals = () => {
   const handleUpdateSavedAmount = async (goalId: string, newAmount: number) => {
     try {
       const { error } = await supabase
-        .from("saving_goals")
+        .from("savings_goals")
         .update({ saved_amount: newAmount })
         .eq("id", goalId)
         .select();
