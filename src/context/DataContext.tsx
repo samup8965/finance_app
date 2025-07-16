@@ -21,6 +21,7 @@ export interface Transaction {
 }
 
 export interface StandingOrder {
+  id: string;
   payee_name: string;
   amount: number;
   currency: string;
@@ -28,16 +29,18 @@ export interface StandingOrder {
   next_payment_date: string;
   status: string;
   type: "standing_order";
+  total: string;
 }
 
 export interface DirectDebit {
+  id: string;
   payee_name: string;
   amount: number;
   currency: string;
-  frequency: string;
-  next_payment_date: string;
+  last_payed: string;
   status: string;
   type: "direct_debit";
+  total: string;
 }
 
 export type RecurringPayment = StandingOrder | DirectDebit;
@@ -122,25 +125,28 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   const transformStandingOrder = (rawOrder: any): StandingOrder => {
     return {
-      payee_name: rawOrder.payee_name || rawOrder.payee?.name || "Unknown",
-      amount: rawOrder.amount,
+      id: rawOrder.standing_order_id,
+      payee_name: rawOrder.display_name,
+      amount: rawOrder.direct_debits,
       currency: rawOrder.currency,
       frequency: rawOrder.frequency || "monthly",
       next_payment_date: rawOrder.next_payment_date,
       status: rawOrder.status || "active",
       type: "standing_order",
+      total: rawOrder.total_recurring_payments,
     };
   };
 
   const transformDirectDebit = (rawDebit: any): DirectDebit => {
     return {
-      payee_name: rawDebit.payee_name || rawDebit.payee?.name || "Unknown",
-      amount: rawDebit.last_payment_amount,
+      id: rawDebit.direct_debit_id,
+      payee_name: rawDebit.name,
+      amount: rawDebit.previous_payment_amount,
       currency: rawDebit.currency,
-      frequency: rawDebit.frequency,
-      next_payment_date: rawDebit.next_payment_date,
-      status: rawDebit.status || "active",
+      last_payed: rawDebit.previous_payment_timestamp,
+      status: rawDebit.status,
       type: "direct_debit",
+      total: rawDebit.total_recurring_payments,
     };
   };
 

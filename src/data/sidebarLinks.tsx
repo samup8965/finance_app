@@ -77,7 +77,7 @@ export const links: SidebarSection[] = [
       {
         name: "recurring-payments",
         icon: <BiTransfer />,
-        component: "recurring-payments",
+        component: "recurringPayments",
       },
     ],
   },
