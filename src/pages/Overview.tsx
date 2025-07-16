@@ -2,12 +2,50 @@ import { useDataContext } from "../context/DataContext";
 import { categoryIcons } from "../assets/Icons";
 import { type CategoryKey } from "../types/CategoryKey";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { supabase } from "../supabaseClient";
+import { type SavingsGoal } from "../types/savingstypes";
 
 const Overview = () => {
   const { accounts, recentTransactions, isConnected, hasError, setError } =
     useDataContext();
+  // States for rendering saving goals
+  const [savingGoal, setSavingGoal] = useState<SavingsGoal>();
+  const [loading, setLoading] = useState(true);
+
+  const progressPercent =
+    ((savingGoal?.saved_amount ?? 0) / (savingGoal?.target_amount ?? 1)) * 100; // Optional chaning ? access if undefined and ?? is default for null/ undefined
+
   console.log("The state for having an account connected is ", isConnected);
   const navigate = useNavigate();
+
+  // Fetch for getting saving goals from database
+
+  useEffect(() => {
+    const fetchSavingGoal = async () => {
+      setLoading(true);
+      setError(false);
+
+      try {
+        const { data, error } = await supabase
+          .from("savings_goals")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (error) {
+          throw error;
+        }
+        setSavingGoal(data?.[0] || null);
+      } catch (err) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSavingGoal();
+  }, []);
 
   // Helper function to render account balance section
 
@@ -218,22 +256,39 @@ const Overview = () => {
   const renderSavingsGoal = () => (
     <div className="bg-white dark:bg-secondary-dark-bg rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
       <h4 className="font-semibold text-gray-900 dark:text-gray-800 mb-4">
-        Savings Goal
+        Saving Goal
       </h4>
       <div className="space-y-3">
-        {isConnected ? (
+        {loading ? (
+          <div className="animate-pulse">
+            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+            <div className="h-2 bg-gray-200 rounded w-full mb-2"></div>
+            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        ) : savingGoal ? (
           <>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400">Progress</span>
-              <span className="font-medium text-gray-900 dark:text-gray-100">
-                $1,000 / $5,000
+              <span className="text-gray-600 dark:text-gray-400">
+                {savingGoal.goal_name}
+              </span>
+              <span className="font-medium dark:text-gray-900">
+                ${savingGoal.saved_amount} / ${savingGoal.target_amount}
               </span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div className="bg-blue-600 h-2 rounded-full w-1/5"></div>
+
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className="h-3 rounded-full bg-blue-600 transition-all duration-300"
+                style={{ width: `${progressPercent}%` }}
+              />
             </div>
+
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              20% complete • $4,000 remaining
+              {Math.round(
+                (savingGoal.saved_amount / savingGoal.target_amount) * 100
+              )}
+              % complete • ${savingGoal.target_amount - savingGoal.saved_amount}{" "}
+              remaining
             </p>
           </>
         ) : (
@@ -242,7 +297,7 @@ const Overview = () => {
               <span className="text-gray-400 text-xl">🎯</span>
             </div>
             <p className="text-gray-600 dark:text-gray-600 text-sm font-medium">
-              Connect to set savings goals
+              No saving goals yet
             </p>
           </div>
         )}

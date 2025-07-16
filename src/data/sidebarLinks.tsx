@@ -6,7 +6,7 @@ import {
 } from "react-icons/md";
 import { FaPiggyBank } from "react-icons/fa";
 import { BiTransfer } from "react-icons/bi";
-import { AiOutlineBarChart, AiOutlineCalendar } from "react-icons/ai";
+import { AiOutlineBarChart } from "react-icons/ai";
 import { RiFileList3Line } from "react-icons/ri";
 import { BsBank2 } from "react-icons/bs";
 import { type ReactElement } from "react";
@@ -18,6 +18,7 @@ import { type ReactElement } from "react";
 export interface SidebarLink {
   name: string;
   icon: ReactElement;
+  component: string;
 }
 
 export interface SidebarSection {
@@ -36,6 +37,7 @@ export const links: SidebarSection[] = [
       {
         name: "overview",
         icon: <MdDashboard />,
+        component: "Dashboard",
       },
     ],
   },
@@ -45,18 +47,22 @@ export const links: SidebarSection[] = [
       {
         name: "transactions",
         icon: <MdOutlineAttachMoney />,
+        component: "transactions",
       },
       {
         name: "budgets",
         icon: <MdOutlineSavings />,
+        component: "budgets",
       },
       {
         name: "bank-accounts",
         icon: <BsBank2 />,
+        component: "bank-accounts",
       },
       {
         name: "credit-cards",
         icon: <MdCreditCard />,
+        component: "credit-cards",
       },
     ],
   },
@@ -64,16 +70,14 @@ export const links: SidebarSection[] = [
     title: "Planning",
     links: [
       {
-        name: "savingGoals",
+        name: "Saving-Goals",
         icon: <FaPiggyBank />,
+        component: "savingGoals",
       },
       {
         name: "recurring-payments",
         icon: <BiTransfer />,
-      },
-      {
-        name: "calendar",
-        icon: <AiOutlineCalendar />,
+        component: "recurring-payments",
       },
     ],
   },
@@ -83,10 +87,12 @@ export const links: SidebarSection[] = [
       {
         name: "spending-trends",
         icon: <AiOutlineBarChart />,
+        component: "spending-trends",
       },
       {
         name: "financial-summary",
         icon: <RiFileList3Line />,
+        component: "financial-summary",
       },
     ],
   },

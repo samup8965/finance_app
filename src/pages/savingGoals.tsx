@@ -336,7 +336,7 @@ export const SavingGoals = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-medium text-white-900 mb-2">
-                No savings goals yet
+                No saving goals yet
               </h3>
               <p className="text-gray-500 mb-6">
                 Create your first goal to start tracking your savings progress

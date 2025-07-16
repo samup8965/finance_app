@@ -54,7 +54,7 @@ export const SideBar = () => {
                 <p className="text-gray-700 m-3 mt-4 uppercase">{item.title}</p>
                 {item.links.map((link) => (
                   <NavLink
-                    to={`/${link.name}`}
+                    to={`/${link.component}`}
                     key={link.name}
                     onClick={handleCloseSideBar}
                     className={({ isActive }) =>
