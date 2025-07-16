@@ -20,6 +20,28 @@ export interface Transaction {
   transaction_category: string;
 }
 
+export interface StandingOrder {
+  payee_name: string;
+  amount: number;
+  currency: string;
+  frequency: string;
+  next_payment_date: string;
+  status: string;
+  type: "standing_order";
+}
+
+export interface DirectDebit {
+  payee_name: string;
+  amount: number;
+  currency: string;
+  frequency: string;
+  next_payment_date: string;
+  status: string;
+  type: "direct_debit";
+}
+
+export type RecurringPayment = StandingOrder | DirectDebit;
+
 interface DataType {
   // Connection states
   isConnected: boolean;
@@ -34,6 +56,9 @@ interface DataType {
   // Data
   accounts: Account[];
   recentTransactions: Transaction[];
+  recurringPayments: RecurringPayment[];
+  standingOrders: StandingOrder[];
+  directDebits: DirectDebit[];
 }
 
 const DataContext = createContext<DataType>({
@@ -45,6 +70,9 @@ const DataContext = createContext<DataType>({
   setUpdated: () => {},
   accounts: [],
   recentTransactions: [],
+  recurringPayments: [],
+  standingOrders: [],
+  directDebits: [],
   loaded: false,
   setLoaded: () => {},
 });
@@ -55,6 +83,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>(
     []
   );
+
+  const [recurringPayments, setRecurringPayments] = useState<
+    RecurringPayment[]
+  >([]);
+  const [standingOrders, setStandingOrders] = useState<StandingOrder[]>([]);
+  const [directDebits, setDirectDebits] = useState<DirectDebit[]>([]);
+
   const [isConnected, setConnected] = useState(false);
   const [hasError, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -85,6 +120,30 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     };
   };
 
+  const transformStandingOrder = (rawOrder: any): StandingOrder => {
+    return {
+      payee_name: rawOrder.payee_name || rawOrder.payee?.name || "Unknown",
+      amount: rawOrder.amount,
+      currency: rawOrder.currency,
+      frequency: rawOrder.frequency || "monthly",
+      next_payment_date: rawOrder.next_payment_date,
+      status: rawOrder.status || "active",
+      type: "standing_order",
+    };
+  };
+
+  const transformDirectDebit = (rawDebit: any): DirectDebit => {
+    return {
+      payee_name: rawDebit.payee_name || rawDebit.payee?.name || "Unknown",
+      amount: rawDebit.last_payment_amount,
+      currency: rawDebit.currency,
+      frequency: rawDebit.frequency,
+      next_payment_date: rawDebit.next_payment_date,
+      status: rawDebit.status || "active",
+      type: "direct_debit",
+    };
+  };
+
   useEffect(() => {
     setError(false);
     // Flow to prevent fetching
@@ -109,16 +168,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         });
         const balanceData = await balanceResponse.json();
 
-        if (!transactionResponse.ok || !balanceResponse.ok) {
+        const recurringResponse = await fetch("/api/recurring-payments", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        const recurringData = await recurringResponse.json();
+
+        if (
+          !transactionResponse.ok ||
+          !balanceResponse.ok ||
+          !recurringResponse.ok
+        ) {
           console.error(" Failed to fetch account data:", transactionData);
           setError(true);
           setLoaded(true);
           setShouldFetchData(false);
           return;
         }
-        console.log("balance data", balanceData);
-
-        console.log("Transaction data", transactionData);
+        console.log("balance data", recurringData);
 
         setShouldFetchData(false);
 
@@ -131,8 +199,30 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
             transformTransaction
           );
 
+        const allStandingOrders: StandingOrder[] = [];
+        const allDirectDebits: DirectDebit[] = [];
+
+        recurringData.accounts_with_recurring_payments.forEach(
+          (account: any) => {
+            const transformedStandingOrders = account.standing_orders.map(
+              transformStandingOrder
+            );
+            const transformedDirectDebits =
+              account.direct_debits.map(transformDirectDebit);
+
+            allStandingOrders.push(...transformedStandingOrders);
+            allDirectDebits.push(...transformedDirectDebits);
+          }
+        );
+
+        const allRecurringPayments = [...allStandingOrders, ...allDirectDebits];
+
         setAccounts(transformedAccounts);
         setRecentTransactions(transformedTransactions);
+
+        setStandingOrders(allStandingOrders);
+        setDirectDebits(allDirectDebits);
+        setRecurringPayments(allRecurringPayments);
         setLoaded(true);
         setError(false);
         console.log("Sucessfuly stored in correct format");
@@ -156,6 +246,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         setUpdated,
         accounts,
         recentTransactions,
+        recurringPayments,
+        standingOrders,
+        directDebits,
         loaded,
         setLoaded,
       }}
