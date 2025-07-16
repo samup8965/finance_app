@@ -202,18 +202,15 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         const allStandingOrders: StandingOrder[] = [];
         const allDirectDebits: DirectDebit[] = [];
 
-        recurringData.accounts_with_recurring_payments.forEach(
-          (account: any) => {
-            const transformedStandingOrders = account.standing_orders.map(
-              transformStandingOrder
-            );
-            const transformedDirectDebits =
-              account.direct_debits.map(transformDirectDebit);
-
-            allStandingOrders.push(...transformedStandingOrders);
-            allDirectDebits.push(...transformedDirectDebits);
-          }
+        const account = recurringData.accounts_with_recurring_payments[0];
+        const transformedStandingOrders = account.standing_orders.map(
+          transformStandingOrder
         );
+        const transformedDirectDebits =
+          account.direct_debits.map(transformDirectDebit);
+
+        allStandingOrders.push(...transformedStandingOrders);
+        allDirectDebits.push(...transformedDirectDebits);
 
         const allRecurringPayments = [...allStandingOrders, ...allDirectDebits];
 

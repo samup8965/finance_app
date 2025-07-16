@@ -105,6 +105,7 @@ export default async function handler(req, res) {
 
         // Handle standing orders response
         if (standingOrdersResponse.ok) {
+          console.log(standingOrdersData.results);
           standingOrders = (standingOrdersData.results || []).map((order) => ({
             ...order,
             type: "standing_order",
@@ -118,6 +119,7 @@ export default async function handler(req, res) {
 
         // Handle direct debits response
         if (directDebitsResponse.ok) {
+          console.log(directDebitsData.results);
           directDebits = (directDebitsData.results || []).map((debit) => ({
             ...debit,
             type: "direct_debit",
