@@ -27,7 +27,7 @@ export interface StandingOrder {
   currency: string;
   last_payed: string;
   status: string;
-  type: "standing_order";
+  type: string;
   total: number;
 }
 
@@ -38,7 +38,7 @@ export interface DirectDebit {
   currency: string;
   last_payed: string;
   status: string;
-  type: "direct_debit";
+  type: string;
   total: number;
 }
 
@@ -132,8 +132,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       amount: rawOrder.direct_debits,
       currency: rawOrder.currency,
       last_payed: rawOrder.previous_payment_timestamp,
-      status: rawOrder.status || "active",
-      type: "standing_order",
+      status: rawOrder.status,
+      type: rawOrder.type,
       total: totalRecurringPayments,
     };
   };
@@ -149,7 +149,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       currency: rawDebit.currency,
       last_payed: rawDebit.previous_payment_timestamp,
       status: rawDebit.status,
-      type: "direct_debit",
+      type: rawDebit.type,
       total: totalRecurringPayments,
     };
   };

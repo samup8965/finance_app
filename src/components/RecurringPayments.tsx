@@ -7,8 +7,21 @@ import { SideBar } from "../components/SideBar";
 
 export const RecurringPayments = () => {
   const { activeMenu } = useStateContext();
-  const { recurringPayments, isConnected } = useDataContext();
+  const { recurringPayments, directDebits, standingOrders, isConnected } =
+    useDataContext();
   const RecurringPaymentsWrapper = () => {
+    let filtered_list = recurringPayments;
+
+    if (directDebits.length === 0) {
+      filtered_list = recurringPayments.filter(
+        (p) => p.type === "STANDING_ORDER"
+      );
+    } else if (standingOrders.length === 0) {
+      filtered_list = recurringPayments.filter(
+        (p) => p.type === "DIRECT_DEBIT"
+      );
+    }
+
     return (
       <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl mx-auto p-6 my-8 min-h-[600px]">
         <div>
@@ -56,7 +69,7 @@ export const RecurringPayments = () => {
                   </div>
                 )}
 
-                {recurringPayments.map((account) => (
+                {filtered_list.map((account) => (
                   <div
                     key={account.id}
                     className="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition-colors duration-200"
