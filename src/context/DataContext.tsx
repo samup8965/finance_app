@@ -25,11 +25,10 @@ export interface StandingOrder {
   payee_name: string;
   amount: number;
   currency: string;
-  frequency: string;
-  next_payment_date: string;
+  last_payed: string;
   status: string;
   type: "standing_order";
-  total: string;
+  total: number;
 }
 
 export interface DirectDebit {
@@ -40,7 +39,7 @@ export interface DirectDebit {
   last_payed: string;
   status: string;
   type: "direct_debit";
-  total: string;
+  total: number;
 }
 
 export type RecurringPayment = StandingOrder | DirectDebit;
@@ -123,21 +122,26 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     };
   };
 
-  const transformStandingOrder = (rawOrder: any): StandingOrder => {
+  const transformStandingOrder = (
+    rawOrder: any,
+    totalRecurringPayments: number
+  ): StandingOrder => {
     return {
       id: rawOrder.standing_order_id,
       payee_name: rawOrder.display_name,
       amount: rawOrder.direct_debits,
       currency: rawOrder.currency,
-      frequency: rawOrder.frequency || "monthly",
-      next_payment_date: rawOrder.next_payment_date,
+      last_payed: rawOrder.previous_payment_timestamp,
       status: rawOrder.status || "active",
       type: "standing_order",
-      total: rawOrder.total_recurring_payments,
+      total: totalRecurringPayments,
     };
   };
 
-  const transformDirectDebit = (rawDebit: any): DirectDebit => {
+  const transformDirectDebit = (
+    rawDebit: any,
+    totalRecurringPayments: number
+  ): DirectDebit => {
     return {
       id: rawDebit.direct_debit_id,
       payee_name: rawDebit.name,
@@ -146,7 +150,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       last_payed: rawDebit.previous_payment_timestamp,
       status: rawDebit.status,
       type: "direct_debit",
-      total: rawDebit.total_recurring_payments,
+      total: totalRecurringPayments,
     };
   };
 
@@ -210,15 +214,22 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
         const account = recurringData.accounts_with_recurring_payments[0];
         const transformedStandingOrders = account.standing_orders.map(
-          transformStandingOrder
+          (order: StandingOrder) =>
+            transformStandingOrder(order, account.total_recurring_payments)
         );
-        const transformedDirectDebits =
-          account.direct_debits.map(transformDirectDebit);
+        const transformedDirectDebits = account.direct_debits.map(
+          (debit: DirectDebit) =>
+            transformDirectDebit(debit, account.total_recurring_payments)
+        );
 
         allStandingOrders.push(...transformedStandingOrders);
         allDirectDebits.push(...transformedDirectDebits);
 
-        const allRecurringPayments = [...allStandingOrders, ...allDirectDebits];
+        const allRecurringPayments = [
+          ...allStandingOrders,
+          ...allDirectDebits,
+          account.total_recurring_payments,
+        ];
 
         setAccounts(transformedAccounts);
         setRecentTransactions(transformedTransactions);
