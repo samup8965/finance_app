@@ -1,0 +1,104 @@
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+} from "recharts";
+import { getMonthlyBalance } from "../data/chartDataProcessing";
+import { useDataContext } from "../context/DataContext";
+
+const NetBalanceChart = () => {
+  const { recentTransactions } = useDataContext();
+  const balanceData = getMonthlyBalance(recentTransactions);
+
+  // Get current balance (latest month)
+  const currentBalance =
+    balanceData.length > 0 ? balanceData[balanceData.length - 1].balance : 0;
+
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-1">
+          Net Balance
+        </h3>
+        <div className="text-3xl font-bold text-gray-900">
+          {currentBalance < 0 && <span className="text-black-500">-</span>}£
+          {Math.abs(currentBalance).toLocaleString()}
+        </div>
+      </div>
+
+      <ResponsiveContainer width="100%" height={250}>
+        <LineChart
+          data={balanceData}
+          margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
+        >
+          {/* Gradient Definition */}
+          <defs>
+            <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.5} />
+              <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1} />
+            </linearGradient>
+          </defs>
+
+          {/* Grid and Axes */}
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <XAxis
+            dataKey="month"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: "#6b7280" }}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: "#6b7280" }}
+            tickFormatter={(value) => `£${value}`}
+          />
+
+          {/* Tooltip */}
+          <Tooltip
+            formatter={(value) => [`£${value}`, "Balance"]}
+            labelStyle={{ color: "#374151" }}
+            contentStyle={{
+              backgroundColor: "#1f2937",
+              border: "none",
+              borderRadius: "8px",
+              color: "white",
+            }}
+          />
+
+          {/* Area under line */}
+          <Area
+            type="monotone"
+            dataKey="balance"
+            stroke="none"
+            fill="#3b82f6"
+            animationDuration={1200}
+          />
+
+          {/* Main line */}
+          <Line
+            type="monotone"
+            dataKey="balance"
+            stroke="#3b82f6"
+            strokeWidth={2}
+            dot={{ fill: "#3b82f6", strokeWidth: 0, r: 3 }}
+            activeDot={{
+              r: 5,
+              stroke: "#3b82f6",
+              strokeWidth: 2,
+              fill: "white",
+            }}
+            animationDuration={1000}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+export default NetBalanceChart;

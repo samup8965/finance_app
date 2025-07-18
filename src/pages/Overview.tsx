@@ -227,7 +227,7 @@ const Overview = () => {
               <div className="pt-3 border-t border-gray-200">
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-gray-700">Net Income</span>
-                  <span className="font-bold">
+                  <span className="font-bold text-black">
                     {currentMonthTransactions
                       .reduce((sum, t) => sum + t.amount, 0)
                       .toFixed(2)}

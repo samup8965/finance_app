@@ -10,6 +10,7 @@ import { TrueLayerCallback } from "./components/TrueLayerCallback";
 import Transactions from "./components/Transactions";
 import { SavingGoals } from "./pages/savingGoals";
 import { RecurringPayments } from "./components/RecurringPayments";
+import { SpendingTrends } from "./pages/SpendingTrends";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
   { path: "/savingGoals", element: <SavingGoals /> },
   { path: "/transactions", element: <Transactions /> },
   { path: "/recurringPayments", element: <RecurringPayments /> },
+  { path: "/spendingTrends", element: <SpendingTrends /> },
   {
     path: "/dashboard",
     element: (

@@ -87,7 +87,7 @@ export const links: SidebarSection[] = [
       {
         name: "spending-trends",
         icon: <AiOutlineBarChart />,
-        component: "spending-trends",
+        component: "spendingTrends",
       },
       {
         name: "financial-summary",

@@ -1,12 +1,31 @@
 import { type Transaction } from "../context/DataContext";
-import { useDataContext } from "../context/DataContext";
 
-// Summary
-// Transactions filters through keeping only negative amounts
-// Group into a single object and group ttransactions using month-year
-// Transform into an array of Objects
+export const getMonthlyIncome = (transactions: Transaction[]) => {
+  const monthlyData = transactions
+    .filter((transaction) => transaction.amount > 0) // Only income (positive amounts)
+    .reduce((acc, transaction) => {
+      const month = new Date(transaction.date).toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      });
 
-export const getMonthlySpending = (transactions: Transaction[]) => {
+      if (!acc[month]) {
+        acc[month] = 0;
+      }
+      acc[month] += transaction.amount;
+
+      return acc;
+    }, {} as Record<string, number>);
+
+  return Object.entries(monthlyData)
+    .map(([month, income]) => ({
+      month,
+      income: parseFloat(income.toFixed(2)),
+    }))
+    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+};
+
+export const getMonthlyExpenses = (transactions: Transaction[]) => {
   const monthlyData = transactions
     .filter((transaction) => transaction.amount < 0)
     .reduce((accumalator, transaction) => {
@@ -32,10 +51,12 @@ export const getMonthlySpending = (transactions: Transaction[]) => {
       // { "Jan 2024": 80, "Feb 2024": 100 } and so on
     }, {} as Record<string, number>);
 
-  return Object.entries(monthlyData).map(([month, spending]) => ({
-    month,
-    spending: parseFloat(spending.toFixed(2)),
-  }));
+  return Object.entries(monthlyData)
+    .map(([month, spending]) => ({
+      month,
+      spending: parseFloat(spending.toFixed(2)),
+    }))
+    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
 
   // Here I convert our flat object using .entries into an array of key-value pairs
 
@@ -64,29 +85,30 @@ export const getCategoryBreakdown = (transactions: Transaction[]) => {
   }));
 };
 
-export const getIncomeVsExpenses = (transactions: Transaction[]) => {
-  const monthlyData = transactions.reduce((accumalator, transaction) => {
-    const month_year = new Date(transaction.date).toLocaleDateString("en-US", {
+export const getMonthlyBalance = (transactions: Transaction[]) => {
+  const monthlyData = transactions.reduce((acc, transaction) => {
+    const month = new Date(transaction.date).toLocaleDateString("en-US", {
       month: "short",
       year: "numeric",
     });
 
-    if (!accumalator[month_year]) {
-      accumalator[month_year] = { income: 0, expenses: 0 };
+    if (!acc[month]) {
+      acc[month] = { income: 0, expenses: 0 };
     }
 
     if (transaction.amount > 0) {
-      accumalator[month_year].income += transaction.amount;
+      acc[month].income += transaction.amount;
     } else {
-      accumalator[month_year].expenses += Math.abs(transaction.amount);
+      acc[month].expenses += Math.abs(transaction.amount);
     }
 
-    return accumalator;
+    return acc;
   }, {} as Record<string, { income: number; expenses: number }>);
 
-  return Object.entries(monthlyData).map(([month, data]) => ({
-    month,
-    income: parseFloat(data.income.toFixed(2)),
-    expenses: parseFloat(data.expenses.toFixed(2)),
-  }));
+  return Object.entries(monthlyData)
+    .map(([month, data]) => ({
+      month,
+      balance: parseFloat((data.income - data.expenses).toFixed(2)),
+    }))
+    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
 };
