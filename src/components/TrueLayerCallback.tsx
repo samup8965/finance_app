@@ -11,7 +11,8 @@ export const TrueLayerCallback = () => {
   const [searchParams, setSearchParams] = useSearchParams(); // Get the code parameters
 
   const { setShouldFetchData } = useStateContext();
-  const { isConnected, setConnected, loaded, setError } = useDataContext();
+  const { isConnected, setConnected, loaded, setError, setShowError } =
+    useDataContext();
 
   const hasExchangedCode = useRef(false);
 
@@ -25,7 +26,7 @@ export const TrueLayerCallback = () => {
 
       if (error) {
         // for now just print it
-        console.error("TrueLayer error", error);
+        setShowError("There has been an error on TrueLayers side");
         navigate("/dashboard");
         return;
       }
@@ -53,14 +54,14 @@ export const TrueLayerCallback = () => {
             console.log("True layer setting fetch on for account and balances");
             setShouldFetchData(true);
           } else {
-            console.error("Token exhange failed:", data);
+            setShowError("Token exhange failed. Please try again!");
             setConnected(false);
             setError(true);
             setSearchParams({});
             navigate("/dashboard");
           }
         } catch (error) {
-          console.error("Network error:", error);
+          setShowError("Network error. Please try again");
           setConnected(false);
           setError(true);
 
@@ -77,6 +78,17 @@ export const TrueLayerCallback = () => {
   useEffect(() => {
     if (loaded && isConnected) {
       navigate("/dashboard");
+    }
+
+    // Only set timeout if we're connected but not loaded yet
+    if (isConnected && !loaded) {
+      const timeoutId = setTimeout(() => {
+        setShowError("Connection is taking too long. Please try again.");
+        navigate("/dashboard");
+      }, 20000); // 20 seconds timeout
+
+      // Cleanup timeout if component unmounts or dependencies change
+      return () => clearTimeout(timeoutId);
     }
   }, [loaded, isConnected]);
 

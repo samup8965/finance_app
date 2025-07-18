@@ -7,8 +7,14 @@ import { supabase } from "../supabaseClient";
 import { type SavingsGoal } from "../types/savingstypes";
 
 const Overview = () => {
-  const { accounts, recentTransactions, isConnected, hasError, setError } =
-    useDataContext();
+  const {
+    accounts,
+    recentTransactions,
+    isConnected,
+    hasError,
+    setError,
+    showError,
+  } = useDataContext();
   // States for rendering saving goals
   const [savingGoal, setSavingGoal] = useState<SavingsGoal>();
   const [loading, setLoading] = useState(true);
@@ -311,9 +317,7 @@ const Overview = () => {
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-800 px-6 py-4 rounded-lg shadow-md z-50 flex items-center justify-between w-[90%] max-w-xl">
           <div className="flex items-center space-x-2">
             <span className="text-xl">⚠️</span>
-            <span className="font-medium">
-              There has been an error connecting your account. Please try again
-            </span>
+            <span className="font-medium">{showError}</span>
           </div>
           <button
             onClick={() => setError(false)}

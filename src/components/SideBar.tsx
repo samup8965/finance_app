@@ -18,10 +18,10 @@ export const SideBar = () => {
   };
 
   const activeLink =
-    "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 text-white bg-slate-700 hover:bg-slate-500";
+    "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 text-white bg-slate-700 hover:bg-slate-700";
 
   const normalLink =
-    "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 text-black-900 dark:text-gray-800 hover:bg-slate-200 dark:hover:bg-slate-500";
+    "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2  dark:text-gray-800 hover:bg-slate-700";
 
   return (
     <div className="ml-3 h-screen md:overflow-hidden overflow-auto md:hover:overflow-auto pb-10">
@@ -70,7 +70,7 @@ export const SideBar = () => {
           </div>
           {/* Connect your bank*/}
           <div className="mt-10 ml-3">
-            <p className=" w-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-2 px-4 rounded-lg shadow-2xl hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] transition duration-300 cursor-pointer ml-*">
+            <p className=" w-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 cursor-pointer ml-*">
               <ConnectBank />
             </p>
           </div>

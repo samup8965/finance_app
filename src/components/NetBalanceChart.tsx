@@ -1,12 +1,11 @@
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Area,
 } from "recharts";
 import { getMonthlyBalance } from "../data/chartDataProcessing";
 import { useDataContext } from "../context/DataContext";
@@ -32,19 +31,18 @@ const NetBalanceChart = () => {
       </div>
 
       <ResponsiveContainer width="100%" height={250}>
-        <LineChart
+        <AreaChart
           data={balanceData}
           margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
         >
-          {/* Gradient Definition */}
+          {/* Define gradient */}
           <defs>
             <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.5} />
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.1} />
+              <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.8} />
+              <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.0} />
             </linearGradient>
           </defs>
 
-          {/* Grid and Axes */}
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis
             dataKey="month"
@@ -58,8 +56,6 @@ const NetBalanceChart = () => {
             tick={{ fontSize: 12, fill: "#6b7280" }}
             tickFormatter={(value) => `£${value}`}
           />
-
-          {/* Tooltip */}
           <Tooltip
             formatter={(value) => [`£${value}`, "Balance"]}
             labelStyle={{ color: "#374151" }}
@@ -71,20 +67,11 @@ const NetBalanceChart = () => {
             }}
           />
 
-          {/* Area under line */}
           <Area
             type="monotone"
             dataKey="balance"
-            stroke="none"
-            fill="#3b82f6"
-            animationDuration={1200}
-          />
-
-          {/* Main line */}
-          <Line
-            type="monotone"
-            dataKey="balance"
             stroke="#3b82f6"
+            fill="url(#colorBalance)"
             strokeWidth={2}
             dot={{ fill: "#3b82f6", strokeWidth: 0, r: 3 }}
             activeDot={{
@@ -93,9 +80,9 @@ const NetBalanceChart = () => {
               strokeWidth: 2,
               fill: "white",
             }}
-            animationDuration={1000}
+            animationDuration={1500}
           />
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );

@@ -50,6 +50,8 @@ interface DataType {
   setConnected: React.Dispatch<React.SetStateAction<boolean>>;
   hasError: boolean;
   setError: React.Dispatch<React.SetStateAction<boolean>>;
+  showError: string | null;
+  setShowError: React.Dispatch<React.SetStateAction<string>>;
   lastUpdated: string | null;
   setUpdated: React.Dispatch<React.SetStateAction<string>>;
   loaded: boolean;
@@ -68,6 +70,8 @@ const DataContext = createContext<DataType>({
   setConnected: () => {},
   hasError: false,
   setError: () => {},
+  showError: "",
+  setShowError: () => {},
   lastUpdated: "",
   setUpdated: () => {},
   accounts: [],
@@ -94,6 +98,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   const [isConnected, setConnected] = useState(false);
   const [hasError, setError] = useState(false);
+  const [showError, setShowError] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [lastUpdated, setUpdated] = useState("");
 
@@ -158,12 +163,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setError(false);
     // Flow to prevent fetching
     if (!shouldFetchData) {
-      console.log("Call has been blocked");
       return;
     }
     const fetchAccountData = async () => {
       try {
-        console.log("Call has been made");
         // Fetch transaction
         const transactionResponse = await fetch("/api/transactions", {
           method: "GET",
@@ -190,7 +193,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           !balanceResponse.ok ||
           !recurringResponse.ok
         ) {
-          console.error(" Failed to fetch account data:", transactionData);
+          setShowError("Failed to fetch account data");
           setError(true);
           setLoaded(true);
           setShouldFetchData(false);
@@ -242,8 +245,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         console.log("Sucessfuly stored in correct format");
       } catch (err) {
         setError(true);
+        setShowError("There has been a network error. Please try again!");
         setShouldFetchData(false);
-        console.error("Network error", err);
       }
     };
 
@@ -256,6 +259,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         setConnected,
         hasError,
         setError,
+        showError,
+        setShowError,
         lastUpdated,
         setUpdated,
         accounts,
