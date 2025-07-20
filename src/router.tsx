@@ -11,6 +11,7 @@ import Transactions from "./components/Transactions";
 import { SavingGoals } from "./pages/savingGoals";
 import { RecurringPayments } from "./components/RecurringPayments";
 import { SpendingTrends } from "./pages/SpendingTrends";
+import { PracticeHome } from "./components/Dashboard/PracticeHome";
 
 export const router = createBrowserRouter([
   {
@@ -29,9 +30,10 @@ export const router = createBrowserRouter([
     element: <TrueLayerCallback />,
   },
   { path: "/savingGoals", element: <SavingGoals /> },
-  { path: "/transactions", element: <Transactions /> },
+  { path: "/transactions", element: <PracticeHome /> },
   { path: "/recurringPayments", element: <RecurringPayments /> },
   { path: "/spendingTrends", element: <SpendingTrends /> },
+  { path: "/practice", element: <PracticeHome /> },
   {
     path: "/dashboard",
     element: (

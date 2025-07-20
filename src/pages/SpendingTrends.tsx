@@ -4,8 +4,8 @@ import NetBalanceChart from "../components/NetBalanceChart";
 import CategoryChart from "../components/CategoryChart";
 import { useStateContext } from "../context/ContextProvider";
 
-import { Navbar } from "../components/Navbar";
-import { SideBar } from "../components/SideBar";
+import { Navbar } from "../components/Dashboard/Navbar";
+import { SideBar } from "../components/Dashboard/SideBar";
 
 export const SpendingTrends = () => {
   const { activeMenu } = useStateContext();

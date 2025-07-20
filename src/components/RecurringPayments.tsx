@@ -2,8 +2,8 @@ import { useDataContext } from "../context/DataContext";
 import { categoryIcons } from "../assets/Icons";
 import { type CategoryKey } from "../types/CategoryKey";
 import { useStateContext } from "../context/ContextProvider";
-import { Navbar } from "../components/Navbar";
-import { SideBar } from "../components/SideBar";
+import { Navbar } from "./Dashboard/Navbar";
+import { SideBar } from "./Dashboard/SideBar";
 
 export const RecurringPayments = () => {
   const { activeMenu } = useStateContext();

@@ -3,8 +3,8 @@ import { type SavingsGoal, type NewSavingsGoal } from "../types/savingstypes";
 import { supabase } from "../supabaseClient";
 import { AddGoalForm } from "../components/AddGoalForm";
 import { GoalCard } from "../components/GoalCard";
-import { Navbar } from "../components/Navbar";
-import { SideBar } from "../components/SideBar";
+import { Navbar } from "../components/Dashboard/Navbar";
+import { SideBar } from "../components/Dashboard/SideBar";
 import { useStateContext } from "../context/ContextProvider";
 
 export const SavingGoals = () => {

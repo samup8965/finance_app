@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import { AiOutlineMenu } from "react-icons/ai";
-import { useStateContext } from "../context/ContextProvider";
+import { useStateContext } from "../../context/ContextProvider";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import UserProfile from "./userProfile";
+import { useDataContext } from "../../context/DataContext";
+import UserProfile from "../userProfile";
 // Interface for NavButton props
 interface NavButtonProps {
   title: string;
@@ -47,6 +48,8 @@ export const Navbar: React.FC = () => {
     setScreenSize,
   } = useStateContext();
 
+  const { isConnected, accounts } = useDataContext();
+
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
     console.log(window.innerWidth);
@@ -85,9 +88,9 @@ export const Navbar: React.FC = () => {
         >
           <p>
             <span className="text-gray-400 text-14"> Hi, </span>{" "}
-            <span className="text-gray-400 text-14 font-bold ml-1 text-14">
-              Michael
-            </span>
+            {isConnected && accounts.length > 0 && (
+              <span>{accounts[0].display_name}</span>
+            )}
           </p>
           <MdKeyboardArrowDown className="text-gray-400 text-14" />
         </div>

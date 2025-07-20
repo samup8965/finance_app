@@ -2,9 +2,9 @@ import { UserAuth } from "../context/AuthContext";
 import { useStateContext } from "../context/ContextProvider";
 
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
-import { SideBar } from "../components/SideBar";
-import { Navbar } from "../components/Navbar";
-import Overview from "./Overview";
+import { SideBar } from "../components/Dashboard/SideBar";
+import { Navbar } from "../components/Dashboard/Navbar";
+import Overview from "../components/Dashboard/Overview";
 
 // Rmoved the signout features for now
 

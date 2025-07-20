@@ -2,9 +2,9 @@ import { useDataContext } from "../context/DataContext";
 import { type Transaction } from "../context/DataContext";
 import { categoryIcons } from "../assets/Icons";
 import { type CategoryKey } from "../types/CategoryKey";
-import { SideBar } from "./SideBar";
+import { SideBar } from "./Dashboard/SideBar";
 import { useStateContext } from "../context/ContextProvider";
-import { Navbar } from "./Navbar";
+import { Navbar } from "./Dashboard/Navbar";
 import { useState, useEffect } from "react";
 
 const Transactions = () => {
