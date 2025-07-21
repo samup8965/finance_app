@@ -4,8 +4,8 @@ import { RouteSelect } from "./RouteSelect";
 
 export const PracticeSideBar = () => {
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-1 overflow-y-auto">
+    <div>
+      <div className="overflow-y-scroll sticky top-4 h-[calc(100vh-32px-48px)]">
         <AccountToggle />
         <RouteSelect />
       </div>

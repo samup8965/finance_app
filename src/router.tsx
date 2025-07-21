@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import Signup from "./components/signup";
 import Signin from "./components/signin";
-import Dashboard from "./pages/dashboard";
+import Dashboard from "./components/Dashboard/dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import ResetPassword from "./components/resetPassword";
 import { AuthContextProvider } from "./context/AuthContext";
@@ -11,7 +11,6 @@ import Transactions from "./components/Transactions";
 import { SavingGoals } from "./pages/savingGoals";
 import { RecurringPayments } from "./components/RecurringPayments";
 import { SpendingTrends } from "./pages/SpendingTrends";
-import { PracticeHome } from "./components/Dashboard/PracticeHome";
 
 export const router = createBrowserRouter([
   {
@@ -30,10 +29,9 @@ export const router = createBrowserRouter([
     element: <TrueLayerCallback />,
   },
   { path: "/savingGoals", element: <SavingGoals /> },
-  { path: "/transactions", element: <PracticeHome /> },
+  { path: "/transactions", element: <Transactions /> },
   { path: "/recurringPayments", element: <RecurringPayments /> },
   { path: "/spendingTrends", element: <SpendingTrends /> },
-  { path: "/practice", element: <PracticeHome /> },
   {
     path: "/dashboard",
     element: (

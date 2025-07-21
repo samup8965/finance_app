@@ -28,18 +28,20 @@ const Overview = () => {
 
       <TopBar />
 
-      {Accountbalance()}
+      <div className="max-w-6xl space-y-6 px-4">
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">{Accountbalance()}</div>
+          <div className="lg:col-span-1">{MonthlySummary()}</div>
+        </section>
 
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl">
-        {/* Left side: Summary + Goal */}
-        <div className="lg:col-span-2 space-y-6">{RecentTransactions()}</div>
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">{RenderSavingsGoal()}</div>
+        </section>
 
-        {/* Right side: Transactions */}
-        <div className="lg:col-span-1 space-y-6">
-          {MonthlySummary()}
-          {RenderSavingsGoal()}
-        </div>
-      </section>
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-3">{RecentTransactions()}</div>
+        </section>
+      </div>
     </div>
   );
 };

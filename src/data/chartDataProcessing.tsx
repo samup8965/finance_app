@@ -13,6 +13,7 @@ export const getMonthlyIncome = (transactions: Transaction[]) => {
         acc[month] = 0;
       }
       acc[month] += transaction.amount;
+      console.log(acc);
 
       return acc;
     }, {} as Record<string, number>);
