@@ -7,8 +7,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { getMonthlyBalance } from "../data/chartDataProcessing";
-import { useDataContext } from "../context/DataContext";
+import { getMonthlyBalance } from "../../data/chartDataProcessing";
+import { useDataContext } from "../../context/DataContext";
 
 const NetBalanceChart = () => {
   const { recentTransactions } = useDataContext();

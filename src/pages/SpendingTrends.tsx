@@ -1,12 +1,15 @@
-import IncomeChart from "../components/IncomeChart";
-import ExpensesChart from "../components/ExpensesChart";
-import NetBalanceChart from "../components/NetBalanceChart";
-import CategoryChart from "../components/CategoryChart";
+import IncomeChart from "../components/Charts/IncomeChart";
+import ExpensesChart from "../components/Charts/ExpensesChart";
+import NetBalanceChart from "../components/Charts/NetBalanceChart";
+import CategoryChart from "../components/Charts/CategoryChart";
+import { PracticeSideBar } from "../components/SideBar/PracticeSideBar";
 
 export const SpendingTrends = () => {
   return (
-    <div className="p-6 bg-blue-150 min-h-screen">
-      <div className="bg-gray-50 rounded-xl shadow-md p-6 max-w-6xl mx-auto">
+    <main className="grid gap-4 p-4 grid-cols-[220px_1fr] bg-stone-100">
+      <PracticeSideBar />
+
+      <div className="bg-white rounded-xl shadow-md p-6 max-w-6xl">
         {/* Main Net Worth Chart - Full Width */}
         <div className="mb-6">
           <NetBalanceChart />
@@ -26,6 +29,6 @@ export const SpendingTrends = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };

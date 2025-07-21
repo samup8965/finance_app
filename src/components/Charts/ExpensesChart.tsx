@@ -1,6 +1,6 @@
 import { LineChart, Line, ResponsiveContainer } from "recharts";
-import { getMonthlyExpenses } from "../data/chartDataProcessing";
-import { useDataContext } from "../context/DataContext";
+import { getMonthlyExpenses } from "../../data/chartDataProcessing";
+import { useDataContext } from "../../context/DataContext";
 
 const ExpensesChart = () => {
   const { recentTransactions } = useDataContext();

@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { getCategoryBreakdown } from "../data/chartDataProcessing";
-import { useDataContext } from "../context/DataContext";
+import { getCategoryBreakdown } from "../../data/chartDataProcessing";
+import { useDataContext } from "../../context/DataContext";
 
 const CategoryChart = () => {
   const { recentTransactions } = useDataContext();

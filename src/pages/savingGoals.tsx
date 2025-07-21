@@ -3,6 +3,7 @@ import { type SavingsGoal, type NewSavingsGoal } from "../types/savingstypes";
 import { supabase } from "../supabaseClient";
 import { AddGoalForm } from "../components/AddGoalForm";
 import { GoalCard } from "../components/GoalCard";
+import { PracticeSideBar } from "../components/SideBar/PracticeSideBar";
 
 export const SavingGoals = () => {
   // State management
@@ -254,107 +255,110 @@ export const SavingGoals = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-gray-500">Loading your savings goals...</div>
+        <div className="text-black">Loading your savings goals...</div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      {/* Header Section */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-white-900">Saving Goals</h1>
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        >
-          {showAddForm ? "Cancel" : "+ Add New Goal"}
-        </button>
-      </div>
-
-      {/* Banner Sections */}
-      {alertMessages.length > 0 &&
-        showAlerts &&
-        alertMessages.map((message) => (
-          <div
-            className={`${
-              alertStyles[message.type as keyof typeof alertStyles]
-            } px-4 py-3 rounded-lg mb-2`}
+    <main className="grid gap-4 p-4 grid-cols-[220px_1fr] bg-stone-100">
+      <PracticeSideBar />
+      <div className=" bg-white rounded-2xl shadow-sm border border-gray-100 max-w-6xl mx-auto p-6">
+        {/* Header Section */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-black">Saving Goals</h1>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
-            {message.message}
-          </div>
-        ))}
-
-      {/* Error Section */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-          {error}
+            {showAddForm ? "Cancel" : "+ Add New Goal"}
+          </button>
         </div>
-      )}
 
-      {/* Form Section */}
-      {showAddForm && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <AddGoalForm
-            onSubmit={handleAddGoal}
-            isSubmitting={submitting}
-            isVisible={showAddForm}
-            onToggle={() => setShowAddForm(!showAddForm)}
-          />
-        </div>
-      )}
-
-      {/* Goals Section */}
-      <div className="goals-section">
-        {goals.length === 0 ? (
-          /* Empty State */
-          <div className="text-center py-16">
-            <div className="bg-gray-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-10 h-10 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-white-900 mb-2">
-              No saving goals yet
-            </h3>
-            <p className="text-gray-500 mb-6">
-              Create your first goal to start tracking your savings progress
-            </p>
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+        {/* Banner Sections */}
+        {alertMessages.length > 0 &&
+          showAlerts &&
+          alertMessages.map((message) => (
+            <div
+              className={`${
+                alertStyles[message.type as keyof typeof alertStyles]
+              } px-4 py-3 rounded-lg mb-2`}
             >
-              Create Your First Goal
-            </button>
-          </div>
-        ) : (
-          /* Goals Grid */
-          <div className="goals-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {goals.map((goal) => (
-              <div key={goal.id} className="goal-card">
-                <GoalCard
-                  goal={goal}
-                  onEdit={handleEditGoal}
-                  onDelete={handleDeleteGoal}
-                  onUpdateSavedAmount={handleUpdateSavedAmount}
-                  isEditing={editingGoalId === goal.id}
-                  onEditToggle={handleEditToggle}
-                />
-              </div>
-            ))}
+              {message.message}
+            </div>
+          ))}
+
+        {/* Error Section */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
           </div>
         )}
+
+        {/* Form Section */}
+        {showAddForm && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <AddGoalForm
+              onSubmit={handleAddGoal}
+              isSubmitting={submitting}
+              isVisible={showAddForm}
+              onToggle={() => setShowAddForm(!showAddForm)}
+            />
+          </div>
+        )}
+
+        {/* Goals Section */}
+        <div className="goals-section">
+          {goals.length === 0 ? (
+            /* Empty State */
+            <div className="text-center py-16">
+              <div className="bg-gray-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-10 h-10 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-white-900 mb-2">
+                No saving goals yet
+              </h3>
+              <p className="text-gray-500 mb-6">
+                Create your first goal to start tracking your savings progress
+              </p>
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Create Your First Goal
+              </button>
+            </div>
+          ) : (
+            /* Goals Grid */
+            <div className="goals-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {goals.map((goal) => (
+                <div key={goal.id} className="goal-card">
+                  <GoalCard
+                    goal={goal}
+                    onEdit={handleEditGoal}
+                    onDelete={handleDeleteGoal}
+                    onUpdateSavedAmount={handleUpdateSavedAmount}
+                    isEditing={editingGoalId === goal.id}
+                    onEditToggle={handleEditToggle}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
