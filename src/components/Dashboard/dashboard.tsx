@@ -6,10 +6,6 @@ import Overview from "./Overview";
 // Rmoved the signout features for now
 
 const Dashboard = () => {
-  const { session } = UserAuth();
-
-  console.log(session);
-
   // const handleSignOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
   //   e.preventDefault();
   //   try {

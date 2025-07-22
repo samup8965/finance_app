@@ -25,13 +25,9 @@ const Signup = () => {
 
   console.log(loading);
 
-  const { session, signUpNewUser } = UserAuth();
+  const { signUpNewUser } = UserAuth();
 
   const navigate = useNavigate();
-
-  // Just for my sake
-  console.log(session);
-  console.log(email, password);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

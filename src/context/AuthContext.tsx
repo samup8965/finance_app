@@ -41,6 +41,7 @@ type ResetPasswordResult = // Makes the types according to documentation and res
 
 interface AuthContextType {
   session: Session | null;
+  loading: boolean;
   signUpNewUser: (email: string, password: string) => Promise<SignUpResult>;
   signInUser: (email: string, password: string) => Promise<SignInResult>;
   signOut: () => void;
@@ -50,6 +51,7 @@ interface AuthContextType {
 // Create a new contect called AuthContext - empty container that can hold and share data - like signup signin and other global states
 const AuthContext = createContext<AuthContextType>({
   session: null,
+  loading: true,
   signUpNewUser: async () => ({ success: false, error: null }), // dummy function as default
   signInUser: async () => ({ success: false, error: "Some error" }),
   signOut: async () => {},
@@ -60,6 +62,8 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   // Here we track the users session login status
   const [session, setSession] = useState<Session | null>(null);
+
+  const [loading, setLoading] = useState(true);
 
   // Sign up
   const signUpNewUser = async (
@@ -104,8 +108,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    console.log("🔍 Checking for existing session...");
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("📊 Session check result:", {
+        hasSession: !!session,
+        userEmail: session?.user?.email,
+      });
       setSession(session);
+      setLoading(false);
     });
     // Set up a listener that triggers every time a user logs in or out
     // _event tells us what happened and session contains the data
@@ -113,6 +123,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      setLoading(false);
 
       // Handle different auth events
       if (_event === "SIGNED_IN") {
@@ -165,7 +176,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ session, signUpNewUser, signInUser, signOut, resetPassword }}
+      value={{
+        session,
+        loading,
+        signUpNewUser,
+        signInUser,
+        signOut,
+        resetPassword,
+      }}
     >
       {children}
     </AuthContext.Provider>

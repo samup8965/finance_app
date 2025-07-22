@@ -30,10 +30,8 @@ const Signin = () => {
     password: "",
   });
 
-  const { session, signInUser, resetPassword } = UserAuth();
+  const { signInUser, resetPassword } = UserAuth();
   const navigate = useNavigate();
-  console.log(session);
-  console.log(email, password);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

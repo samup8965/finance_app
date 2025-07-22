@@ -5,7 +5,6 @@ import Signin from "./components/signin";
 import Dashboard from "./components/Dashboard/dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import ResetPassword from "./components/resetPassword";
-import { AuthContextProvider } from "./context/AuthContext";
 import { TrueLayerCallback } from "./components/TrueLayerCallback";
 import Transactions from "./components/Transactions";
 import { SavingGoals } from "./pages/savingGoals";
@@ -15,11 +14,7 @@ import { SpendingTrends } from "./pages/SpendingTrends";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <AuthContextProvider>
-        <App />
-      </AuthContextProvider>
-    ),
+    element: <App />,
   },
   { path: "/signup", element: <Signup /> },
   { path: "/signin", element: <Signin /> },
@@ -36,8 +31,7 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       <PrivateRoute>
-        {" "}
-        <Dashboard />{" "}
+        <Dashboard />
       </PrivateRoute>
     ),
   },
