@@ -69,6 +69,8 @@ export default async function handler(req, res) {
     // Saving to Database no encryption !!
 
     const userId = req.session?.id;
+    console.log(req);
+    console.log(userId);
     const encryptedAcessToken = tokenData.access_token;
     const encryptedRefreshToken = tokenData.refresh_token;
 
