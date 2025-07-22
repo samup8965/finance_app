@@ -52,10 +52,26 @@ export default async function handler(req, res) {
     console.log("TrueLayer response status:", tokenResponse.status);
 
     const tokenData = await tokenResponse.json();
+    console.log(tokenData);
 
     if (!tokenResponse.ok) {
       console.log("TrueLayer error:", tokenData);
       return res.status(tokenResponse.status).json(tokenData);
+    }
+
+    // Saving to Database
+
+    const userId = req.session?.id;
+    const encryptedAcessToken = encrypt(tokenData.access_token);
+    const encryptedRefreshToken = encrypt(tokenData.refresh_token);
+
+    const { data, error } = await supabase.from("bank_connections").insert({
+      user_id: userId,
+      access_token: encryptedAcessToken,
+      refresh_token: encryptedRefreshToken,
+    });
+    if (error) {
+      console.log("Supabase inser error", error);
     }
 
     // We set cookies by using a Set-cookie header on a request so the browser can do it
