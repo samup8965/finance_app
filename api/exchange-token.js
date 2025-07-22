@@ -59,19 +59,20 @@ export default async function handler(req, res) {
       return res.status(tokenResponse.status).json(tokenData);
     }
 
-    // Saving to Database
+    // Saving to Database no encryption !!
 
     const userId = req.session?.id;
-    const encryptedAcessToken = encrypt(tokenData.access_token);
-    const encryptedRefreshToken = encrypt(tokenData.refresh_token);
+    const encryptedAcessToken = tokenData.access_token;
+    const encryptedRefreshToken = tokenData.refresh_token;
 
-    const { data, error } = await supabase.from("bank_connections").insert({
+    const { error } = await supabase.from("bank_connections").insert({
       user_id: userId,
       access_token: encryptedAcessToken,
       refresh_token: encryptedRefreshToken,
+      expires_in: tokenData.expires_in,
     });
     if (error) {
-      console.log("Supabase inser error", error);
+      console.log("Supabase insert error", error);
     }
 
     // We set cookies by using a Set-cookie header on a request so the browser can do it
