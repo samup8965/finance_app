@@ -3,8 +3,8 @@ import { createContext, useContext, useState } from "react";
 import { type ReactNode } from "react";
 
 interface ContextType {
-  activeMenu: boolean;
-  setActiveMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  activeMenu: string;
+  setActiveMenu: React.Dispatch<React.SetStateAction<string>>;
   profileClicked: boolean;
   setProfileClicked: React.Dispatch<React.SetStateAction<boolean>>;
   screenSize: number | undefined;
@@ -14,7 +14,7 @@ interface ContextType {
 }
 
 const StateContext = createContext<ContextType>({
-  activeMenu: false,
+  activeMenu: "",
   setActiveMenu: () => {},
   profileClicked: false,
   setProfileClicked: () => {},
@@ -27,7 +27,7 @@ const StateContext = createContext<ContextType>({
 // Could implement initial state for further navugation features for now just doing profile
 
 export const ContextProvider = ({ children }: { children: ReactNode }) => {
-  const [activeMenu, setActiveMenu] = useState(true);
+  const [activeMenu, setActiveMenu] = useState("");
   const [profileClicked, setProfileClicked] = useState(false);
   const [shouldFetchData, setShouldFetchData] = useState(false);
 

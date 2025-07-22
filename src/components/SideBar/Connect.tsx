@@ -1,5 +1,5 @@
 import { Route } from "./RouteSelect";
-import { BiTransfer } from "react-icons/bi";
+import { RiBankLine } from "react-icons/ri";
 
 const Connect = () => {
   const handleConnectBank = () => {
@@ -13,7 +13,12 @@ const Connect = () => {
     >
       <div className="flex items-center justify-between">
         <div>
-          <Route Icon={BiTransfer} selected={false} title="Connect-Bank" />
+          <Route
+            Icon={RiBankLine}
+            selected={false}
+            title="Connect-Bank"
+            component="Connect-Bank"
+          />
         </div>
       </div>
     </div>

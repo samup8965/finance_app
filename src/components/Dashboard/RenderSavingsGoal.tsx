@@ -48,7 +48,7 @@ const RenderSavingsGoals = () => {
             {goal.goal_name}
           </span>
           <span className="font-medium dark:text-gray-900">
-            ${goal.saved_amount} / ${goal.target_amount}
+            £{goal.saved_amount} / £{goal.target_amount}
           </span>
         </div>
 
@@ -61,7 +61,7 @@ const RenderSavingsGoals = () => {
 
         <p className="text-xs text-gray-500 dark:text-gray-400">
           {Math.round((goal.saved_amount / goal.target_amount) * 100)}% complete
-          • ${goal.target_amount - goal.saved_amount} remaining
+          • £{goal.target_amount - goal.saved_amount} remaining
         </p>
       </div>
     );

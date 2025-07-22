@@ -1,7 +1,9 @@
 import { useDataContext } from "../../context/DataContext";
+import { useNavigate } from "react-router-dom";
 
 const renderMonthlySummary = () => {
   const { recentTransactions, isConnected } = useDataContext();
+  const navigate = useNavigate();
 
   const now = new Date();
   const currentMonth = now.getMonth();
@@ -35,7 +37,14 @@ const renderMonthlySummary = () => {
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 h-[300px] flex flex-col justify-between">
       <div className="flex justify-between text-sm text-gray-500 font-medium mb-1">
         <span>Monthly Summary</span>
-        <span className="text-blue-600 cursor-pointer">View more</span>
+        {isConnected && (
+          <button
+            className="text-sm font-medium text-blue-600 hover:underline"
+            onClick={() => navigate("/transactions")}
+          >
+            View more
+          </button>
+        )}
       </div>
 
       <div className="text-3xl font-medium text-gray-900 mb-2">

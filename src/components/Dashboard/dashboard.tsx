@@ -1,5 +1,5 @@
 import { UserAuth } from "../../context/AuthContext";
-import { PracticeSideBar } from "../SideBar/PracticeSideBar";
+import { PracticeSideBar } from "../SideBar/SideBar";
 
 import Overview from "./Overview";
 

@@ -33,8 +33,8 @@ const Accountbalance = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-r from-blue-100 via-blue-70 to-white p-6 rounded-lg shadow h-[300px]">
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200  flex flex-col h-[250px]">
+    <div className=" to-white p-6 rounded-lg shadow h-[300px]">
+      <div className="bg-white rounded-2xl p-6 shadow-sm border bg-gradient-to-br from-blue-200 via-white-100 border-gray-100  flex flex-col h-[250px]">
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
           <div>
@@ -49,10 +49,12 @@ const Accountbalance = () => {
                 : "Connect your account"}
             </p>
           </div>
-          <span className="text-black text-sm font-medium">
-            <p>placeholder</p>
-            <p>placeholder</p>
-          </span>
+          {isConnected && (
+            <span className="text-black text-sm font-medium">
+              <p>{accounts[0].sort_code}</p>
+              <p>{accounts[0].account_number}</p>
+            </span>
+          )}
         </div>
 
         {/* Chart */}
@@ -77,7 +79,6 @@ const Accountbalance = () => {
                   tickLine={false}
                   axisLine={false}
                   domain={[0, (dataMax) => Math.ceil(dataMax / 100) * 100]}
-                  interval="preserveStartEnd"
                 />
 
                 {/* Bars */}
@@ -89,7 +90,7 @@ const Accountbalance = () => {
                     return (
                       <Cell
                         key={`cell-${index}`}
-                        fill={isCurrentMonth ? "#ef4444" : "#0A2540"}
+                        fill={isCurrentMonth ? "#0A2540" : "#808080"}
                       />
                     );
                   })}

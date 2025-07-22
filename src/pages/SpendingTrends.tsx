@@ -2,7 +2,7 @@ import IncomeChart from "../components/Charts/IncomeChart";
 import ExpensesChart from "../components/Charts/ExpensesChart";
 import NetBalanceChart from "../components/Charts/NetBalanceChart";
 import CategoryChart from "../components/Charts/CategoryChart";
-import { PracticeSideBar } from "../components/SideBar/PracticeSideBar";
+import { PracticeSideBar } from "../components/SideBar/SideBar";
 
 export const SpendingTrends = () => {
   return (

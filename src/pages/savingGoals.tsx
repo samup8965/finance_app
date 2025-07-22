@@ -3,7 +3,7 @@ import { type SavingsGoal, type NewSavingsGoal } from "../types/savingstypes";
 import { supabase } from "../supabaseClient";
 import { AddGoalForm } from "../components/AddGoalForm";
 import { GoalCard } from "../components/GoalCard";
-import { PracticeSideBar } from "../components/SideBar/PracticeSideBar";
+import { PracticeSideBar } from "../components/SideBar/SideBar";
 
 export const SavingGoals = () => {
   // State management

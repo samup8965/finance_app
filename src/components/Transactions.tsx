@@ -4,7 +4,7 @@ import { categoryIcons } from "../assets/Icons";
 import { type CategoryKey } from "../types/CategoryKey";
 
 import { useState, useEffect } from "react";
-import { PracticeSideBar } from "./SideBar/PracticeSideBar";
+import { PracticeSideBar } from "./SideBar/SideBar";
 
 const Transactions = () => {
   const { recentTransactions, isConnected } = useDataContext();
@@ -107,7 +107,7 @@ const Transactions = () => {
     <main className="grid gap-4 p-4 grid-cols-[220px_1fr] bg-stone-100">
       <PracticeSideBar />
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mx-auto space-y-6 mt-4 px-4 py-6 w-full max-w-3xl h-[600px]">
+      <div className=" bg-white rounded-2xl shadow-sm border border-gray-100 mx-auto space-y-6 mt-4 px-4 py-6 w-full max-w-3xl h-[600px]">
         {/* Header Section */}
         <div className="px-8 py-6 border-b border-gray-50">
           <div className="flex justify-between items-center">

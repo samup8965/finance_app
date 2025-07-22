@@ -1,7 +1,7 @@
 import { useDataContext } from "../context/DataContext";
 import { categoryIcons } from "../assets/Icons";
 import { type CategoryKey } from "../types/CategoryKey";
-import { PracticeSideBar } from "./SideBar/PracticeSideBar";
+import { PracticeSideBar } from "./SideBar/SideBar";
 
 export const RecurringPayments = () => {
   const { recurringPayments, directDebits, standingOrders, isConnected } =
@@ -53,9 +53,9 @@ export const RecurringPayments = () => {
             ) : (
               <div className="space-y-4 max-h-full flex-shrink-0">
                 <p className="text-gray-500 text-sm">
-                  {isConnected
+                  {isConnected && recurringPayments.length === 0
                     ? "Your recurring payments will appear here once you start some subscriptions"
-                    : "Link your bank account to view and track your recurring payments"}
+                    : ""}
                 </p>
 
                 {recurringPayments[0].total && (
