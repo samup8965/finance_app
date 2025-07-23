@@ -68,15 +68,17 @@ export default async function handler(req, res) {
 
     // Saving to Database no encryption !!
 
-    const userId = req.session?.id;
-    console.log(req);
-    console.log(userId);
-    const encryptedAcessToken = tokenData.access_token;
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const userId = session.user.id;
+
+    const encryptedAccessToken = tokenData.access_token;
     const encryptedRefreshToken = tokenData.refresh_token;
 
     const { data, error } = await supabase.from("bank_connection").insert({
       user_id: userId,
-      access_token: encryptedAcessToken,
+      access_token: encryptedAccessToken,
       refresh_token: encryptedRefreshToken,
       expires_in: tokenData.expires_in,
     });
