@@ -71,6 +71,7 @@ export default async function handler(req, res) {
     const {
       data: { session },
     } = await supabase.auth.getSession();
+    console.log(session);
     const userId = session.user.id;
 
     const encryptedAccessToken = tokenData.access_token;
