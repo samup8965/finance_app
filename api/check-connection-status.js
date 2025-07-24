@@ -30,8 +30,7 @@ export default async function handler(req, res) {
     const { data, error: dbError } = await supabase
       .from("bank_connection")
       .select("id")
-      .eq("user_id", user.id)
-      .single();
+      .eq("user_id", user.id);
 
     if (dbError) {
       console.error("Database error:", dbError.message);
@@ -39,7 +38,7 @@ export default async function handler(req, res) {
 
     console.log("Bank connection query result:", data);
 
-    return res.json({ isConnected: !!data });
+    return res.json({ isConnected: data && data.length > 0 });
   } catch (error) {
     console.error("Function error", error);
     return res.status(500).json({ error: "Internal server error" });
