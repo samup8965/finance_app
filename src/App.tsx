@@ -17,10 +17,6 @@ function App() {
     }
   }, [session, loading]);
 
-  if (loading) {
-    return <div>Loading your finance tracker...</div>;
-  }
-
   return null; // Router will handle what to show
 }
 export default App;

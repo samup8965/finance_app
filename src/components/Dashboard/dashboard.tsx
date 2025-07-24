@@ -2,15 +2,14 @@ import { PracticeSideBar } from "../SideBar/SideBar";
 import { useDataContext } from "../../context/DataContext";
 import { useStateContext } from "../../context/ContextProvider";
 import { UserAuth } from "../../context/AuthContext";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 import Overview from "./Overview";
 
 // Rmoved the signout features for now
 
 const Dashboard = () => {
-  const [checkingConnection, setCheckingConnection] = useState(false);
-  const { setConnected } = useDataContext();
+  const { setConnected, loaded } = useDataContext();
   const { setShouldFetchData } = useStateContext();
   const { session } = UserAuth();
 
@@ -23,7 +22,6 @@ const Dashboard = () => {
   }, []);
 
   const checkBankConnectionStatus = async () => {
-    setCheckingConnection(true);
     try {
       const response = await fetch("/api/check-connection-status", {
         method: "GET",
@@ -44,17 +42,21 @@ const Dashboard = () => {
     } catch (error) {
       setConnected(false);
     } finally {
-      setCheckingConnection(false);
     }
   };
 
-  return checkingConnection ? (
-    <div>Loading your information</div>
-  ) : (
+  return loaded ? (
     <main className="grid gap-4 p-4 grid-cols-[220px_1fr] bg-stone-100">
       <PracticeSideBar />
       <Overview />
     </main>
+  ) : (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-4 text-sm text-gray-800">Loading your data</p>
+      </div>
+    </div>
   );
 };
 
