@@ -47,9 +47,11 @@ const renderMonthlySummary = () => {
         )}
       </div>
 
-      <div className="text-3xl font-medium text-gray-900 mb-2">
-        £{net.toFixed(2)}
-      </div>
+      {isConnected && (
+        <div className="text-3xl font-medium text-gray-900 mb-2">
+          £{net.toFixed(2)}
+        </div>
+      )}
 
       {isConnected && currentMonthTransactions.length > 0 ? (
         <>

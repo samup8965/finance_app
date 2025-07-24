@@ -27,11 +27,18 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: "Invalid or expired token" });
     }
 
-    const { data } = await supabase
+    const { data, error: dbError } = await supabase
       .from("bank_connection")
       .select("id")
       .eq("user_id", user.id)
       .single();
+
+    if (dbError) {
+      console.error("Database error:", dbError.message);
+    }
+
+    console.log("Bank connection query result:", data);
+
     return res.json({ isConnected: !!data });
   } catch (error) {
     console.error("Function error", error);
