@@ -68,13 +68,12 @@ export default async function handler(req, res) {
     // Grabbing the session access token
     const authHeader = req.headers.authorization;
     console.log(authHeader);
-    const token = authHeader.replace("Bearer,", "");
+    const token = authHeader.replace("Bearer", "");
     console.log(token);
     const {
       data: { user },
-      error: authError,
     } = await supabase.auth.getUser(token);
-    constuserId = user.id;
+    const userId = user.id;
 
     const encryptedAccessToken = tokenData.access_token;
     const encryptedRefreshToken = tokenData.refresh_token;
@@ -116,7 +115,6 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Function error:", error);
-    console.log("There was an auth error", { authError });
     return res.status(500).json({
       error: error.message,
       stack: error.stack,

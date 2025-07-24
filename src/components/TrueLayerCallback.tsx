@@ -37,6 +37,7 @@ export const TrueLayerCallback = () => {
       if (error) {
         // for now just print it
         setShowError("There has been an error on TrueLayers side");
+        setError(true);
         navigate("/dashboard");
         return;
       }
@@ -83,7 +84,7 @@ export const TrueLayerCallback = () => {
     };
 
     handleCallback();
-  }, [searchParams, navigate]);
+  }, [searchParams]);
 
   // Handling sucessful navigation only after connection and loaded data
   useEffect(() => {
