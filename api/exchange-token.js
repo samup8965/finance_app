@@ -67,9 +67,8 @@ export default async function handler(req, res) {
 
     // Grabbing the session access token
     const authHeader = req.headers.authorization;
-    console.log(authHeader);
+
     const token = authHeader.replace("Bearer", "");
-    console.log(token);
     const {
       data: { user },
     } = await supabase.auth.getUser(token);
