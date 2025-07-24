@@ -68,11 +68,16 @@ export default async function handler(req, res) {
 
     // Saving to Database no encryption !!
 
+    // Grabbing the session access token
+    const authHeader = req.headers.authorization;
+    const token = authHeader.replace("Bearer,", "");
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    console.log(session);
-    const userId = session.user.id;
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+    constuserId = user.id;
+
+    console.log("There was an auth error", { authError });
 
     const encryptedAccessToken = tokenData.access_token;
     const encryptedRefreshToken = tokenData.refresh_token;

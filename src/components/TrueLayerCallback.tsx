@@ -5,10 +5,13 @@ import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 import { useDataContext } from "../context/DataContext";
+import { supabase } from "../supabaseClient";
 
 export const TrueLayerCallback = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams(); // Get the code parameters
+
+  // Need the session user id to prove who the user is before sending a request
 
   const { setShouldFetchData } = useStateContext();
   const { isConnected, setConnected, loaded, setError, setShowError } =
@@ -18,6 +21,13 @@ export const TrueLayerCallback = () => {
 
   useEffect(() => {
     const handleCallback = async () => {
+      // Grabbing the session and access token so I can prove which user is making the request
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
       const code = searchParams.get("code");
       const error = searchParams.get("error");
 
@@ -39,6 +49,7 @@ export const TrueLayerCallback = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer${token}`,
             },
             body: JSON.stringify({ code }),
           });
