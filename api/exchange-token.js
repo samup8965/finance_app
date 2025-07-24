@@ -26,7 +26,6 @@ export default async function handler(req, res) {
     }
 
     const { code } = req.body;
-    console.log("Received code in backend:", code);
 
     if (!code) {
       console.log("Missing code in request body");
@@ -42,8 +41,6 @@ export default async function handler(req, res) {
       redirect_uri: process.env.TRUELAYER_REDIRECT_URI,
       code: code,
     });
-
-    console.log("Token exchange request body:", requestBody.toString());
 
     const tokenResponse = await fetch(
       "https://auth.truelayer.com/connect/token",
@@ -70,14 +67,14 @@ export default async function handler(req, res) {
 
     // Grabbing the session access token
     const authHeader = req.headers.authorization;
+    console.log(authHeader);
     const token = authHeader.replace("Bearer,", "");
+    console.log(token);
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser(token);
     constuserId = user.id;
-
-    console.log("There was an auth error", { authError });
 
     const encryptedAccessToken = tokenData.access_token;
     const encryptedRefreshToken = tokenData.refresh_token;
@@ -119,6 +116,7 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Function error:", error);
+    console.log("There was an auth error", { authError });
     return res.status(500).json({
       error: error.message,
       stack: error.stack,
