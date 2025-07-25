@@ -247,6 +247,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         setError(true);
         setShowError("There has been a network error. Please try again!");
         setShouldFetchData(false);
+        setLoaded(true);
       }
     };
 
