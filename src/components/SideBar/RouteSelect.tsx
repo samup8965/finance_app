@@ -68,7 +68,7 @@ export const Route = ({
           : " hover:bg-stone-300 bg-transparent text-stone-500 shadow-none"
       }`}
       onClick={() => {
-        if (title !== "Connect-Bank") {
+        if (title !== "Connect-Bank" && title !== "Disconnect") {
           navigate(`/${component}`);
         }
         setActiveMenu(title);

@@ -9,7 +9,7 @@ import Overview from "./Overview";
 // Rmoved the signout features for now
 
 const Dashboard = () => {
-  const { setConnected, loaded } = useDataContext();
+  const { setConnected, loaded, isConnected } = useDataContext();
   const { setShouldFetchData } = useStateContext();
   const { session } = UserAuth();
 
@@ -44,6 +44,15 @@ const Dashboard = () => {
     } finally {
     }
   };
+
+  if (!isConnected) {
+    return (
+      <main className="grid gap-4 p-4 grid-cols-[220px_1fr] bg-stone-100">
+        <PracticeSideBar />
+        <Overview />
+      </main>
+    );
+  }
 
   return loaded ? (
     <main className="grid gap-4 p-4 grid-cols-[220px_1fr] bg-stone-100">

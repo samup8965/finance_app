@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import { encryptToken } from "../src/data/encryptions";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const serviceRoleKey = process.env.SERVICE_ROLE_KEY;
@@ -75,8 +74,9 @@ export default async function handler(req, res) {
     } = await supabase.auth.getUser(token);
     const userId = user.id;
 
-    const encryptedAccessToken = encryptToken(tokenData.access_token);
-    const encryptedRefreshToken = encryptToken(tokenData.refresh_token);
+    // No encryption implemented !!
+    const encryptedAccessToken = tokenData.access_token;
+    const encryptedRefreshToken = tokenData.refresh_token;
 
     const { data, error } = await supabase.from("bank_connection").insert({
       user_id: userId,
