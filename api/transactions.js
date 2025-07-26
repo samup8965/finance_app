@@ -1,6 +1,4 @@
-// Add this at the very top of your handler function
 export default async function handler(req, res) {
-  // THIS SHOULD ALWAYS LOG - if it doesn't, the endpoint isn't being hit
   console.log("=== API HANDLER STARTED ===");
   console.log("Method:", req.method);
   console.log("URL:", req.url);
@@ -34,18 +32,79 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Get the cookie from HTTP cookie
-    const accessToken = req.cookies.truelayer_access_token;
+    const refreshAcessToken = async (refreshToken) => {
+      console.log("Attempting to refresh access token..");
+
+      const refreshResponse = await fetch(
+        "https://auth.truelayer.com/connect/token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            grant_type: "refresh_token",
+            client_id: "personalfinancetracker-561293",
+            client_secret: process.env.TRUELAYER_CLIENT_SECRET,
+            refresh_token: refreshToken,
+          }),
+        }
+      );
+
+      const refreshData = await refreshResponse.json();
+      console.log("Refresh response status", refreshResponse.status);
+
+      if (!refreshResponse.ok) {
+        console.error("Failed to refresh token", refreshData);
+      }
+
+      console.log("Successfully refreshed access token");
+      return refreshData;
+    };
+
+    // Get tokens from cookies
+    let accessToken = req.cookies.truelayer_access_token;
+    const refreshToken = req.cookies.truelayer_refresh_token;
+
     console.log("Access token exists:", !!accessToken);
-    console.log(
-      "Access token (first 10 chars):",
-      accessToken?.substring(0, 10) + "..."
-    );
+    console.log("Refresh token exists:", !!refreshToken);
+
+    if (!accessToken && refreshToken) {
+      try {
+        const tokenData = await refreshAcessToken(refreshToken);
+        accessToken = tokenData.access_token;
+
+        if (!accessToken) {
+          console.error("No access token returned from refresh");
+        }
+
+        // Now we can set new access token as cookie
+
+        // Set the new access token as a cookie
+        const maxAge = tokenData.expires_in
+          ? tokenData.expires_in * 1000
+          : 3600000; // Default 1 hour
+        res.setHeader("Set-Cookie", [
+          `truelayer_access_token=${accessToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=${Math.floor(
+            maxAge / 1000
+          )}; Path=/`,
+        ]);
+
+        console.log("New access token set in cookie");
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        return res.status(401).json({
+          error: "Failed to refresh access token.",
+        });
+      }
+    }
+
+    // Final check
 
     if (!accessToken) {
-      console.log("No access token found in cookies");
+      console.log("No access token available after refresh attempt");
       return res.status(401).json({
-        error: "No access token found. Please reconnect your bank account.",
+        error: "No access token available. Please reconnect your bank account.",
       });
     }
 
