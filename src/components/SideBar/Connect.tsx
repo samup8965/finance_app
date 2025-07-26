@@ -16,12 +16,15 @@ const Connect = () => {
   };
 
   const handleDisconnect = async () => {
+    console.log("handle disconnect called");
     if (!session?.user) return;
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("bank_connection")
       .delete()
       .eq("user_id", session.user.id);
+
+    console.log("Delete result:", { error, data });
 
     if (error) {
       console.error("Failed to disconnect:", error.message);
