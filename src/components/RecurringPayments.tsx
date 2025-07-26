@@ -34,10 +34,10 @@ export const RecurringPayments = () => {
           </div>
 
           {/* Content Section */}
-          <div className="px-8 py-6 overflow-hidden max-h-96 overflow-y-auto pr-2 -mr-2">
+          <div className="px-8 py-6 overflow-hidden max-h-96 overflow-y-auto pr-2 -mr-2 text-black">
             {!isConnected && recurringPayments.length === 0 ? (
               <div className="text-center py-16">
-                <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <div className="w-20 h-20 bg-gradient-to-br from-gray-100 text-black to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner ">
                   <span className="text-gray-400 text-3xl">
                     {isConnected ? "📄" : "🔗"}
                   </span>
@@ -51,11 +51,11 @@ export const RecurringPayments = () => {
                 </div>
               </div>
             ) : (
-              <div className="space-y-4 max-h-full flex-shrink-0">
-                <p className="text-gray-500 text-sm">
-                  {isConnected && recurringPayments.length === 0
+              <div className="space-y-4 max-h-full flex-shrink-0 ">
+                <p className=" text-gray-500 text-sm">
+                  {isConnected && !recurringPayments[0].total
                     ? "Your recurring payments will appear here once you start some subscriptions"
-                    : ""}
+                    : "Hello"}
                 </p>
 
                 {recurringPayments[0].total && (

@@ -127,6 +127,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         console.log("✅ User signed in.");
       } else if (_event === "SIGNED_OUT") {
         console.log("🚪 User signed out.");
+        setSession(null);
+        console.log(session);
       } else if (_event === "TOKEN_REFRESHED") {
         console.log("🔁 Session token was refreshed.");
       } else if (_event === "USER_UPDATED") {
@@ -151,6 +153,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     if (error) {
       console.error("there was an error:", error);
     }
+    console.log(session);
   };
 
   const resetPassword = async (email: string): Promise<ResetPasswordResult> => {
