@@ -10,7 +10,7 @@ import {
 } from "recharts";
 
 const Accountbalance = () => {
-  const { accounts, isConnected, recentTransactions } = useDataContext();
+  const { accounts, connectionStatus, recentTransactions } = useDataContext();
 
   // Get the monthly balance data
   const monthlyData = getMonthlyBalance(recentTransactions);
@@ -40,16 +40,16 @@ const Accountbalance = () => {
           <div>
             <p className="text-gray-500 text-sm font-medium mb-1">Balance</p>
             <p className="text-3xl font-bold text-gray-900">
-              {isConnected && accounts.length > 0
+              {connectionStatus === "connected" && accounts.length > 0
                 ? `${
                     accounts[0].currency === "GBP" ? "£" : "$"
                   }${accounts[0].current_balance.toLocaleString()}`
-                : isConnected
+                : connectionStatus === "connected"
                 ? "No accounts found"
                 : "Connect your account"}
             </p>
           </div>
-          {isConnected && (
+          {connectionStatus === "connected" && (
             <span className="text-black text-sm font-medium">
               <p>{accounts[0].sort_code}</p>
               <p>{accounts[0].account_number}</p>
@@ -58,7 +58,7 @@ const Accountbalance = () => {
         </div>
 
         {/* Chart */}
-        {isConnected && accounts.length > 0 ? (
+        {connectionStatus === "connected" && accounts.length > 0 ? (
           <div className="flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -105,7 +105,7 @@ const Accountbalance = () => {
                 <span className="text-gray-400 text-xl">📊</span>
               </div>
               <p className="text-gray-500 text-sm">
-                {isConnected
+                {connectionStatus === "connected"
                   ? "No balance data available"
                   : "Connect to view balance history"}
               </p>

@@ -1,4 +1,4 @@
-import { type Transaction } from "../context/DataContext";
+import { type Transaction } from "../types/bank_data";
 
 export const getMonthlyIncome = (transactions: Transaction[]) => {
   const monthlyData = transactions

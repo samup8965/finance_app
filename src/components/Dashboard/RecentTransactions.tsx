@@ -4,7 +4,7 @@ import { type CategoryKey } from "../../types/CategoryKey";
 import { categoryIcons } from "../../assets/Icons";
 
 export const RecentTransactions = () => {
-  const { recentTransactions, isConnected } = useDataContext();
+  const { recentTransactions, connectionStatus } = useDataContext();
   const navigate = useNavigate();
   return (
     <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow border border-gray-100">
@@ -14,12 +14,12 @@ export const RecentTransactions = () => {
             Recent Transactions
           </h3>
           <p className="text-sm text-gray-500">
-            {isConnected
+            {connectionStatus === "connected"
               ? "A snapshot of your latest activity"
               : "Connect your account to view transactions"}
           </p>
         </div>
-        {isConnected && recentTransactions.length > 0 && (
+        {connectionStatus === "connected" && recentTransactions.length > 0 && (
           <button
             className="text-sm font-medium text-blue-600 hover:underline"
             onClick={() => navigate("/transactions")}
@@ -29,7 +29,7 @@ export const RecentTransactions = () => {
         )}
       </div>
 
-      {isConnected && recentTransactions.length > 0 ? (
+      {connectionStatus === "connected" && recentTransactions.length > 0 ? (
         <ul className="divide-y divide-gray-200">
           {recentTransactions.slice(0, 4).map((transaction, index) => (
             <li key={index} className="py-4 flex items-center justify-between">
@@ -75,11 +75,11 @@ export const RecentTransactions = () => {
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-gray-400 text-2xl">
-              {isConnected ? "📄" : "🔗"}
+              {connectionStatus === "connected" ? "📄" : "🔗"}
             </span>
           </div>
           <p className="text-gray-600 font-medium">
-            {isConnected
+            {connectionStatus === "connected"
               ? "Your transactions will appear here"
               : "Link your bank account to view transactions"}
           </p>

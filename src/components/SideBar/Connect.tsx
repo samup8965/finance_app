@@ -3,11 +3,10 @@ import { RiBankLine } from "react-icons/ri";
 import { useDataContext } from "../../context/DataContext";
 import { UserAuth } from "../../context/AuthContext";
 import { supabase } from "../../supabaseClient";
-import { useStateContext } from "../../context/ContextProvider";
 
 const Connect = () => {
-  const { isConnected, setConnected } = useDataContext();
-  const { setShouldFetchData } = useStateContext();
+  const { connectionStatus, setConnectionStatus } = useDataContext();
+
   const { session } = UserAuth();
 
   const handleConnectBank = () => {
@@ -32,11 +31,10 @@ const Connect = () => {
     }
 
     // Update context and UI
-    setConnected(false);
-    setShouldFetchData(false);
+    setConnectionStatus("disconnected");
   };
 
-  return isConnected ? (
+  return connectionStatus === "connected" ? (
     <div
       className="flex sticky top-[calc(100vh_-_48px_-_16px)] flex-col h-12 border-t px-2 border-stone-300 justify-end text-xs cursor-pointer"
       onClick={handleDisconnect}

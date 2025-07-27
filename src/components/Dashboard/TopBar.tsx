@@ -9,14 +9,14 @@ const TopBar = () => {
     year: "numeric",
   });
 
-  const { isConnected, accounts } = useDataContext();
+  const { connectionStatus, accounts } = useDataContext();
   const { signOut } = UserAuth();
 
   return (
     <div className="border-b px-4 mb-4 mt-2 pb-4 border-stone-200">
       <div className="flex items-center justify-between p-0.5">
         <div>
-          {isConnected ? (
+          {connectionStatus === "connected" ? (
             <span className="text-sm font-bold block text-black">
               Hey, {accounts[0].display_name.split(" ")[0] + "!"}
             </span>
