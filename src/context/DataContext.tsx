@@ -149,8 +149,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const fetchAccountData = async (): Promise<void> => {
-    if (connectionStatus !== "connected") return;
-
     try {
       setLoaded(false);
       setError(false);
