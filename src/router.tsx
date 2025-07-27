@@ -9,7 +9,7 @@ import { TrueLayerCallback } from "./components/TrueLayerCallback";
 import Transactions from "./components/Transactions";
 import { SavingGoals } from "./components/saving/savingGoals";
 import { RecurringPayments } from "./components/RecurringPayments";
-import { SpendingTrends } from "./components/saving/SpendingTrends";
+import { SpendingTrends } from "./components/SpendingTrends";
 
 export const router = createBrowserRouter([
   {

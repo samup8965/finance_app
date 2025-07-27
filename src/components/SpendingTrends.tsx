@@ -1,8 +1,8 @@
-import IncomeChart from "../Charts/IncomeChart";
-import ExpensesChart from "../Charts/ExpensesChart";
-import NetBalanceChart from "../Charts/NetBalanceChart";
-import CategoryChart from "../Charts/CategoryChart";
-import { PracticeSideBar } from "../SideBar/SideBar";
+import IncomeChart from "./Charts/IncomeChart";
+import ExpensesChart from "./Charts/ExpensesChart";
+import NetBalanceChart from "./Charts/NetBalanceChart";
+import CategoryChart from "./Charts/CategoryChart";
+import { PracticeSideBar } from "./SideBar/SideBar";
 
 export const SpendingTrends = () => {
   return (

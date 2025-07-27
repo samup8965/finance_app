@@ -4,8 +4,13 @@ import { type CategoryKey } from "../types/CategoryKey";
 import { PracticeSideBar } from "./SideBar/SideBar";
 
 export const RecurringPayments = () => {
-  const { recurringPayments, directDebits, standingOrders, connectionStatus } =
-    useDataContext();
+  const {
+    recurringPayments,
+    directDebits,
+    standingOrders,
+    connectionStatus,
+    loaded,
+  } = useDataContext();
 
   let filtered_list = recurringPayments;
 
@@ -16,6 +21,47 @@ export const RecurringPayments = () => {
   } else if (standingOrders.length === 0) {
     filtered_list = recurringPayments.filter((p) => p.type === "DIRECT_DEBIT");
   }
+  if (connectionStatus === "checking") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-sm text-gray-800">
+            Checking connection status...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (connectionStatus === "error") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-red-500 text-xl mb-4">⚠️</div>
+          <p className="text-sm text-gray-800">
+            Unable to check connection status. Please refresh the page.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Data loading state (connected but data not loaded yet)
+  if (connectionStatus === "connected" && !loaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-sm text-gray-800">
+            Loading your recurring payments...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="grid gap-4 p-4 grid-cols-[220px_1fr] bg-stone-100">
       <PracticeSideBar />
