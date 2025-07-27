@@ -1,73 +1,21 @@
 import { createContext, useContext, useState } from "react";
 import { useEffect } from "react";
 import { type ReactNode } from "react";
-import { useStateContext } from "../context/ContextProvider";
+import { UserAuth } from "../context/AuthContext";
 
-interface Account {
-  account_id: string;
-  display_name: string;
-  current_balance: number;
-  currency: string;
-  sort_code: number;
-  account_number: number;
-}
-
-export interface Transaction {
-  amount: number;
-  description: string;
-  date: string;
-  transaction_type: string;
-  transaction_category: string;
-}
-
-export interface StandingOrder {
-  id: string;
-  payee_name: string;
-  amount: number;
-  currency: string;
-  last_payed: string;
-  status: string;
-  type: string;
-  total: number;
-}
-
-export interface DirectDebit {
-  id: string;
-  payee_name: string;
-  amount: number;
-  currency: string;
-  last_payed: string;
-  status: string;
-  type: string;
-  total: number;
-}
-
-export type RecurringPayment = StandingOrder | DirectDebit;
-
-interface DataType {
-  // Connection states
-  isConnected: boolean;
-  setConnected: React.Dispatch<React.SetStateAction<boolean>>;
-  hasError: boolean;
-  setError: React.Dispatch<React.SetStateAction<boolean>>;
-  showError: string | null;
-  setShowError: React.Dispatch<React.SetStateAction<string>>;
-  lastUpdated: string | null;
-  setUpdated: React.Dispatch<React.SetStateAction<string>>;
-  loaded: boolean;
-  setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
-
-  // Data
-  accounts: Account[];
-  recentTransactions: Transaction[];
-  recurringPayments: RecurringPayment[];
-  standingOrders: StandingOrder[];
-  directDebits: DirectDebit[];
-}
+import {
+  type Account,
+  type Transaction,
+  type StandingOrder,
+  type DirectDebit,
+  type RecurringPayment,
+  type DataType,
+  type ConnectionStatus,
+} from "../types/bank_data";
 
 const DataContext = createContext<DataType>({
-  isConnected: false,
-  setConnected: () => {},
+  connectionStatus: "disconnected",
+  setConnectionStatus: () => {},
   hasError: false,
   setError: () => {},
   showError: "",
@@ -81,6 +29,9 @@ const DataContext = createContext<DataType>({
   directDebits: [],
   loaded: false,
   setLoaded: () => {},
+  refreshData: async () => {},
+  checkConnection: async () => {},
+  forceRefresh: async () => {},
 });
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
@@ -89,20 +40,20 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>(
     []
   );
-
   const [recurringPayments, setRecurringPayments] = useState<
     RecurringPayment[]
   >([]);
   const [standingOrders, setStandingOrders] = useState<StandingOrder[]>([]);
   const [directDebits, setDirectDebits] = useState<DirectDebit[]>([]);
 
-  const [isConnected, setConnected] = useState(false);
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>("disconnected");
   const [hasError, setError] = useState(false);
   const [showError, setShowError] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [lastUpdated, setUpdated] = useState("");
 
-  const { shouldFetchData, setShouldFetchData } = useStateContext();
+  const { session } = UserAuth();
 
   // API call to fetch the data
 
@@ -159,105 +110,160 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     };
   };
 
-  useEffect(() => {
+  // Check bank connection status
+
+  const checkConnection = async () => {
+    setConnectionStatus("checking");
     setError(false);
-    // Flow to prevent fetching
-    if (!shouldFetchData) {
-      return;
-    }
-    const fetchAccountData = async () => {
-      try {
-        // Fetch transaction
-        const transactionResponse = await fetch("/api/transactions", {
-          method: "GET",
-          credentials: "include", // for cookies
-        });
+    setShowError("");
 
-        const transactionData = await transactionResponse.json();
+    try {
+      const response = await fetch("/api/check-connection-status", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
 
-        const balanceResponse = await fetch("/api/balance", {
-          method: "GET",
-          credentials: "include",
-        });
-        const balanceData = await balanceResponse.json();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const recurringResponse = await fetch("/api/recurring_payments", {
-          method: "GET",
-          credentials: "include",
-        });
+      const data = await response.json();
 
-        const recurringData = await recurringResponse.json();
-
-        if (
-          !transactionResponse.ok ||
-          !balanceResponse.ok ||
-          !recurringResponse.ok
-        ) {
-          setShowError("Failed to fetch account data");
-          setError(true);
-          setLoaded(true);
-          setShouldFetchData(false);
-          return;
-        }
-        console.log("balance data", recurringData);
-
-        setShouldFetchData(false);
-
-        // Transform and set state
-        const transformedAccounts =
-          balanceData.accounts_with_balances.map(transformAccount);
-
-        const transformedTransactions =
-          transactionData.accounts_with_transactions[0].transactions.map(
-            transformTransaction
-          );
-
-        const allStandingOrders: StandingOrder[] = [];
-        const allDirectDebits: DirectDebit[] = [];
-
-        const account = recurringData.accounts_with_recurring_payments[0];
-        const transformedStandingOrders = account.standing_orders.map(
-          (order: StandingOrder) =>
-            transformStandingOrder(order, account.total_recurring_payments)
-        );
-        const transformedDirectDebits = account.direct_debits.map(
-          (debit: DirectDebit) =>
-            transformDirectDebit(debit, account.total_recurring_payments)
-        );
-
-        allStandingOrders.push(...transformedStandingOrders);
-        allDirectDebits.push(...transformedDirectDebits);
-
-        const allRecurringPayments = [
-          ...allStandingOrders,
-          ...allDirectDebits,
-          account.total_recurring_payments,
-        ];
-
-        setAccounts(transformedAccounts);
-        setRecentTransactions(transformedTransactions);
-
-        setStandingOrders(allStandingOrders);
-        setDirectDebits(allDirectDebits);
-        setRecurringPayments(allRecurringPayments);
-        setLoaded(true);
-        setError(false);
-        console.log("Sucessfuly stored in correct format");
-      } catch (err) {
-        setError(true);
-        setShowError("There has been a network error. Please try again!");
-        setShouldFetchData(false);
+      if (data.isConnected) {
+        setConnectionStatus("connected");
+        await fetchAccountData();
+      } else {
+        setConnectionStatus("disconnected");
         setLoaded(true);
       }
-    };
+    } catch (error) {
+      console.error("Error checking connection status:", error);
+      setConnectionStatus("error");
+      setError(true);
+      setShowError("Failed to check connection status");
+      setLoaded(true);
+      throw error;
+    }
+  };
 
-    fetchAccountData();
-  }, [shouldFetchData]);
+  const fetchAccountData = async (): Promise<void> => {
+    if (connectionStatus !== "connected") return;
+
+    try {
+      setLoaded(false);
+      setError(false);
+      setShowError("");
+
+      const transactionResponse = await fetch("/api/transactions", {
+        method: "GET",
+        credentials: "include", // for cookies
+      });
+
+      const transactionData = await transactionResponse.json();
+
+      const balanceResponse = await fetch("/api/balance", {
+        method: "GET",
+        credentials: "include",
+      });
+      const balanceData = await balanceResponse.json();
+
+      const recurringResponse = await fetch("/api/recurring_payments", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const recurringData = await recurringResponse.json();
+
+      if (
+        !transactionResponse.ok ||
+        !balanceResponse.ok ||
+        !recurringResponse.ok
+      ) {
+        setShowError("Failed to fetch account data");
+        setError(true);
+        setLoaded(true);
+
+        return;
+      }
+      console.log("balance data", recurringData);
+
+      // Transform and set state
+      const transformedAccounts =
+        balanceData.accounts_with_balances.map(transformAccount);
+
+      const transformedTransactions =
+        transactionData.accounts_with_transactions[0].transactions.map(
+          transformTransaction
+        );
+
+      const allStandingOrders: StandingOrder[] = [];
+      const allDirectDebits: DirectDebit[] = [];
+
+      const account = recurringData.accounts_with_recurring_payments[0];
+      const transformedStandingOrders = account.standing_orders.map(
+        (order: StandingOrder) =>
+          transformStandingOrder(order, account.total_recurring_payments)
+      );
+      const transformedDirectDebits = account.direct_debits.map(
+        (debit: DirectDebit) =>
+          transformDirectDebit(debit, account.total_recurring_payments)
+      );
+
+      allStandingOrders.push(...transformedStandingOrders);
+      allDirectDebits.push(...transformedDirectDebits);
+
+      const allRecurringPayments = [
+        ...allStandingOrders,
+        ...allDirectDebits,
+        account.total_recurring_payments,
+      ];
+
+      setAccounts(transformedAccounts);
+      setRecentTransactions(transformedTransactions);
+
+      setStandingOrders(allStandingOrders);
+      setDirectDebits(allDirectDebits);
+      setRecurringPayments(allRecurringPayments);
+      setLoaded(true);
+      setError(false);
+      console.log("Sucessfuly stored in correct format");
+    } catch (error) {
+      setError(true);
+      setShowError("There has been a network error. Please try again!");
+      setLoaded(true);
+    }
+  };
+
+  // RefreshData function for manual refresh
+
+  const refreshData = async (): Promise<void> => {
+    if (connectionStatus === "connected") {
+      await fetchAccountData();
+    } else {
+      await checkConnection();
+    }
+  };
+
+  const forceRefresh = async (): Promise<void> => {
+    await checkConnection();
+  };
+
+  useEffect(() => {
+    if (session) {
+      checkConnection();
+    } else {
+      setConnectionStatus("disconnected");
+      setLoaded(true);
+    }
+  }, [session]);
+
   return (
     <DataContext.Provider
       value={{
-        isConnected,
-        setConnected,
+        connectionStatus,
+        setConnectionStatus,
         hasError,
         setError,
         showError,
@@ -271,6 +277,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         directDebits,
         loaded,
         setLoaded,
+        refreshData,
+        checkConnection,
+        forceRefresh,
       }}
     >
       {children}

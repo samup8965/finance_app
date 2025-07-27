@@ -1,4 +1,4 @@
-import { type GoalCardProps } from "../types/savingstypes";
+import { type GoalCardProps } from "../../types/savingstypes";
 import { Trash2, Edit3, Check, X } from "lucide-react";
 import { useState } from "react";
 

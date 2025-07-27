@@ -7,9 +7,9 @@ import PrivateRoute from "./components/PrivateRoute";
 import ResetPassword from "./components/resetPassword";
 import { TrueLayerCallback } from "./components/TrueLayerCallback";
 import Transactions from "./components/Transactions";
-import { SavingGoals } from "./pages/savingGoals";
+import { SavingGoals } from "./components/saving/savingGoals";
 import { RecurringPayments } from "./components/RecurringPayments";
-import { SpendingTrends } from "./pages/SpendingTrends";
+import { SpendingTrends } from "./components/saving/SpendingTrends";
 
 export const router = createBrowserRouter([
   {

@@ -4,7 +4,7 @@ import { type CategoryKey } from "../types/CategoryKey";
 import { PracticeSideBar } from "./SideBar/SideBar";
 
 export const RecurringPayments = () => {
-  const { recurringPayments, directDebits, standingOrders, isConnected } =
+  const { recurringPayments, directDebits, standingOrders, connectionStatus } =
     useDataContext();
 
   let filtered_list = recurringPayments;
@@ -27,7 +27,7 @@ export const RecurringPayments = () => {
               Recurring Payments
             </h2>
             <p className="text-sm text-gray-500">
-              {isConnected
+              {connectionStatus === "connected"
                 ? "All your activity"
                 : "Connect your account to view recurring payments"}
             </p>
@@ -35,25 +35,23 @@ export const RecurringPayments = () => {
 
           {/* Content Section */}
           <div className="px-8 py-6 overflow-hidden max-h-96 overflow-y-auto pr-2 -mr-2 text-black">
-            {!isConnected && recurringPayments.length === 0 ? (
+            {connectionStatus === "disconnected" &&
+            recurringPayments.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 bg-gradient-to-br from-gray-100 text-black to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner ">
-                  <span className="text-gray-400 text-3xl">
-                    {isConnected ? "📄" : "🔗"}
-                  </span>
+                  <span className="text-gray-400 text-3xl">{"🔗"}</span>
                 </div>
                 <div className="max-w-sm mx-auto space-y-2 text-black">
                   <p className="text-gray-900 font-medium text-base">
-                    {isConnected
-                      ? "No recurring payments"
-                      : "Connect your bank account"}
+                    {"Connect your bank account"}
                   </p>
                 </div>
               </div>
             ) : (
               <div className="space-y-4 max-h-full flex-shrink-0 ">
                 <p className=" text-gray-500 text-sm">
-                  {isConnected && !recurringPayments[0].total
+                  {connectionStatus === "connected" &&
+                  !recurringPayments[0].total
                     ? "Your recurring payments will appear here once you start some subscriptions"
                     : "Hello"}
                 </p>

@@ -1,5 +1,5 @@
 import { useDataContext } from "../context/DataContext";
-import { type Transaction } from "../context/DataContext";
+import { type Transaction } from "../types/bank_data";
 import { categoryIcons } from "../assets/Icons";
 import { type CategoryKey } from "../types/CategoryKey";
 
@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { PracticeSideBar } from "./SideBar/SideBar";
 
 const Transactions = () => {
-  const { recentTransactions, isConnected } = useDataContext();
+  const { recentTransactions, connectionStatus } = useDataContext();
 
   // States for search bar
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -116,45 +116,46 @@ const Transactions = () => {
                 All Transactions
               </h3>
               <p className="text-sm text-gray-500">
-                {isConnected
+                {connectionStatus === "connected"
                   ? "All your activity"
                   : "Connect your account to view transactions"}
               </p>
             </div>
-            {isConnected && recentTransactions.length > 0 && (
-              <div className="flex items-center space-x-3">
-                <select
-                  value={sortOption}
-                  onChange={handleSortChange}
-                  className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-black"
-                >
-                  <option value="date-desc">Latest First</option>
-                  <option value="date-asc">Oldest First</option>
-                  <option value="amount-desc">Highest Amount</option>
-                  <option value="amount-asc">Lowest Amount</option>
-                </select>
+            {connectionStatus === "connected" &&
+              recentTransactions.length > 0 && (
+                <div className="flex items-center space-x-3">
+                  <select
+                    value={sortOption}
+                    onChange={handleSortChange}
+                    className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-black"
+                  >
+                    <option value="date-desc">Latest First</option>
+                    <option value="date-asc">Oldest First</option>
+                    <option value="amount-desc">Highest Amount</option>
+                    <option value="amount-asc">Lowest Amount</option>
+                  </select>
 
-                {/* Search Input */}
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search transactions..."
-                    className="w-48 px-3 py-2 text-sm border border-gray-200 rounded-lg  focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                  />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <span className="">🔍</span>
+                  {/* Search Input */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Search transactions..."
+                      className="w-48 px-3 py-2 text-sm border border-gray-200 rounded-lg  focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <span className="">🔍</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         </div>
 
         {/* Content Section */}
         <div className="px-8 py-6 overflow-hidden max-h-96 overflow-y-auto pr-2 -mr-2">
-          {isConnected && recentTransactions.length > 0 ? (
+          {connectionStatus === "connected" && recentTransactions.length > 0 ? (
             <div className="space-y-4  max-h-full flex-shrink-0">
               {filteredTransactions.map((transaction, index) => (
                 <div
@@ -207,17 +208,17 @@ const Transactions = () => {
             <div className="text-center py-16">
               <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                 <span className="text-gray-400 text-3xl">
-                  {isConnected ? "📄" : "🔗"}
+                  {connectionStatus === "connected" ? "📄" : "🔗"}
                 </span>
               </div>
               <div className="max-w-sm mx-auto space-y-2">
                 <p className="text-gray-900 font-medium text-base">
-                  {isConnected
+                  {connectionStatus === "connected"
                     ? "No transactions yet"
                     : "Connect your bank account"}
                 </p>
                 <p className="text-gray-500 text-sm">
-                  {isConnected
+                  {connectionStatus === "connected"
                     ? "Your transactions will appear here once you start spending"
                     : "Link your bank account to view and track your transactions"}
                 </p>

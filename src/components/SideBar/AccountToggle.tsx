@@ -5,7 +5,7 @@ export const AccountToggle = () => {
   const context = UserAuth();
   const email = context?.session?.user.email ?? "No email found";
 
-  const { accounts, isConnected } = useDataContext();
+  const { accounts, connectionStatus } = useDataContext();
 
   return (
     <div className="border-b mb-4 mt-2 pb-4 border-stone-300">
@@ -13,7 +13,7 @@ export const AccountToggle = () => {
         {/** Place holder for google picture when you log in with google */}
 
         <div className="text-start">
-          {isConnected ? (
+          {connectionStatus === "connected" ? (
             <span className="text-sm font-bold block text-black">
               {accounts[0].display_name}
             </span>

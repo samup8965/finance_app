@@ -2,7 +2,7 @@ import { useDataContext } from "../../context/DataContext";
 import { useNavigate } from "react-router-dom";
 
 const renderMonthlySummary = () => {
-  const { recentTransactions, isConnected } = useDataContext();
+  const { recentTransactions, connectionStatus } = useDataContext();
   const navigate = useNavigate();
 
   const now = new Date();
@@ -37,7 +37,7 @@ const renderMonthlySummary = () => {
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 h-[300px] flex flex-col justify-between">
       <div className="flex justify-between text-sm text-gray-500 font-medium mb-1">
         <span>Monthly Summary</span>
-        {isConnected && (
+        {connectionStatus === "connected" && (
           <button
             className="text-sm font-medium text-blue-600 hover:underline"
             onClick={() => navigate("/transactions")}
@@ -47,13 +47,14 @@ const renderMonthlySummary = () => {
         )}
       </div>
 
-      {isConnected && (
+      {connectionStatus === "connected" && (
         <div className="text-3xl font-medium text-gray-900 mb-2">
           £{net.toFixed(2)}
         </div>
       )}
 
-      {isConnected && currentMonthTransactions.length > 0 ? (
+      {connectionStatus === "connected" &&
+      currentMonthTransactions.length > 0 ? (
         <>
           <div className="flex justify-between items-start text-sm">
             {/* Income Section */}
@@ -110,11 +111,13 @@ const renderMonthlySummary = () => {
         <div className="text-center py-6">
           <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
             <span className="text-gray-400 text-xl">
-              {isConnected ? "📊" : "🔗"}
+              {connectionStatus === "connected" ? "📊" : "🔗"}
             </span>
           </div>
           <p className="text-gray-600 dark:text-gray-600 text-sm font-medium">
-            {isConnected ? "No data this month" : "Connect to view summary"}
+            {connectionStatus === "connected"
+              ? "No data this month"
+              : "Connect to view summary"}
           </p>
         </div>
       )}

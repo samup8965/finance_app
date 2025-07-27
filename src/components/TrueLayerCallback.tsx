@@ -3,7 +3,6 @@
 
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useStateContext } from "../context/ContextProvider";
 import { useDataContext } from "../context/DataContext";
 import { supabase } from "../supabaseClient";
 
@@ -13,9 +12,7 @@ export const TrueLayerCallback = () => {
 
   // Need the session user id to prove who the user is before sending a request
 
-  const { setShouldFetchData } = useStateContext();
-  const { isConnected, setConnected, loaded, setError, setShowError } =
-    useDataContext();
+  const { connectionStatus, loaded, refreshData } = useDataContext();
 
   const hasExchangedCode = useRef(false);
 
@@ -35,9 +32,7 @@ export const TrueLayerCallback = () => {
       console.log("Redirect received error:", error);
 
       if (error) {
-        // for now just print it
-        setShowError("There has been an error on TrueLayers side");
-        setError(true);
+        console.error("TrueLayer error:", error);
         navigate("/dashboard");
         return;
       }
@@ -59,24 +54,17 @@ export const TrueLayerCallback = () => {
 
           if (response.ok) {
             // Sucess need to store access tokens
-            setConnected(true);
             console.log("Sucessful", data); // For now print
-
             setSearchParams({});
-            console.log("True layer setting fetch on for account and balances");
-            setShouldFetchData(true);
+
+            await refreshData();
           } else {
-            setShowError("Token exhange failed. Please try again!");
-            setConnected(false);
-            setError(true);
+            console.error("Token exchange failed", data);
             setSearchParams({});
             navigate("/dashboard");
           }
         } catch (error) {
-          setShowError("Network error. Please try again");
-          setConnected(false);
-          setError(true);
-
+          console.error("Network error during token exchange");
           setSearchParams({});
           navigate("/dashboard");
         }
@@ -88,21 +76,23 @@ export const TrueLayerCallback = () => {
 
   // Handling sucessful navigation only after connection and loaded data
   useEffect(() => {
-    if (loaded && isConnected) {
+    if (loaded && connectionStatus === "connected") {
       navigate("/dashboard");
     }
 
-    // Only set timeout if we're connected but not loaded yet
-    if (isConnected && !loaded) {
-      const timeoutId = setTimeout(() => {
-        setShowError("Connection is taking too long. Please try again.");
-        navigate("/dashboard");
-      }, 20000); // 20 seconds timeout
-
-      // Cleanup timeout if component unmounts or dependencies change
-      return () => clearTimeout(timeoutId);
+    if (connectionStatus === "error") {
+      navigate("/dashboard");
     }
-  }, [loaded, isConnected]);
+  }, [connectionStatus, loaded]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      console.warn("Connection timeout - redirecting to dashboard");
+      navigate("/dashboard");
+    }, 20000); // 20 seconds timeout
+
+    return () => clearTimeout(timeoutId);
+  }, [navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

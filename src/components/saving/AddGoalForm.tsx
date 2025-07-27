@@ -3,7 +3,7 @@ import {
   type AddGoalFormProps,
   type SavingsGoalFormData,
   type NewSavingsGoal,
-} from "../types/savingstypes";
+} from "../../types/savingstypes";
 
 export const AddGoalForm: React.FC<AddGoalFormProps> = ({
   onSubmit,

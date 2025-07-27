@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { type SavingsGoal, type NewSavingsGoal } from "../types/savingstypes";
-import { supabase } from "../supabaseClient";
-import { AddGoalForm } from "../components/AddGoalForm";
-import { GoalCard } from "../components/GoalCard";
-import { PracticeSideBar } from "../components/SideBar/SideBar";
+import {
+  type SavingsGoal,
+  type NewSavingsGoal,
+} from "../../types/savingstypes";
+import { supabase } from "../../supabaseClient";
+import { AddGoalForm } from "./AddGoalForm";
+import { GoalCard } from "./GoalCard";
+import { PracticeSideBar } from "../SideBar/SideBar";
 
 export const SavingGoals = () => {
   // State management
