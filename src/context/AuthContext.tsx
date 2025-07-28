@@ -128,7 +128,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       } else if (_event === "SIGNED_OUT") {
         console.log("🚪 User signed out.");
         setSession(null);
-        console.log(session);
       } else if (_event === "TOKEN_REFRESHED") {
         console.log("🔁 Session token was refreshed.");
       } else if (_event === "USER_UPDATED") {

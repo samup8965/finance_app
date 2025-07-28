@@ -6,7 +6,6 @@ function App() {
   const { session, loading } = UserAuth();
 
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!loading) {
       if (session) {
@@ -14,9 +13,10 @@ function App() {
       } else {
         navigate("/signup");
       }
+    } else {
     }
   }, [session, loading]);
 
-  return null; // Router will handle what to show
+  return null;
 }
 export default App;

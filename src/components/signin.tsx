@@ -4,9 +4,7 @@ import { useState } from "react";
 import { UserAuth } from "../context/AuthContext.tsx";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-import { useEffect } from "react";
-import { supabase } from "../supabaseClient";
-
+type FormMode = "signin" | "reset";
 const Signin = () => {
   // States
 
@@ -15,11 +13,7 @@ const Signin = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  console.log(loading);
-
-  // New states for password reset flow
-  const [showResetForm, setShowResetForm] = useState<Boolean>(false);
-  const [resetLoading, setResetLoading] = useState<boolean>(false);
+  const [formMode, setFormMode] = useState<FormMode>("signin");
   const [success, setSuccess] = useState(""); // success messages
 
   // Password visible state
@@ -47,6 +41,7 @@ const Signin = () => {
 
     // Stops the request to Supabase
     if (emailError || passwordError) {
+      setLoading(false);
       return;
     }
 
@@ -69,6 +64,17 @@ const Signin = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    clearMessages();
+  };
+
+  const clearMessages = () => {
+    setError("");
+    setSuccess("");
+    setValidationErrors({ email: "", password: "" });
+  };
+
   // minimal validation as it has already been validated
   const validateEmail = (email: string) => {
     if (!email) {
@@ -84,152 +90,150 @@ const Signin = () => {
     return "";
   };
 
-  // Function to switch to reset form
-  const showForgotPassword = () => {
-    setShowResetForm(true);
-    setError("");
-    setValidationErrors({
-      email: "",
-      password: "",
-    });
-    setSuccess("");
-  };
-  // Function to switch back to sign in form
-  const showSignIn = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setShowResetForm(false);
-    setError("");
-    setValidationErrors({
-      email: "",
-      password: "",
-    });
-    setSuccess("");
+  const switchToResetMode = () => {
+    setFormMode("reset");
+    clearMessages();
   };
 
-  const handleSendResetLink = async (e: React.FormEvent<HTMLFormElement>) => {
+  const switchToSignInmode = () => {
+    setFormMode("signin");
+    clearMessages();
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setResetLoading(true);
-    setError("");
-    setSuccess("");
+    clearMessages();
+    setLoading(true);
 
-    const response = await resetPassword(email);
+    // Validate email before resetting it
 
-    if (response.success) {
-      setSuccess("Password reset link sent! Check your email.");
-    } else {
-      setError(response.error || "Something went wrong.");
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setValidationErrors({ email: emailError, password: "" });
+      setLoading(false);
+      return;
     }
+    try {
+      const response = await resetPassword(email);
 
-    setResetLoading(false);
+      if (response.success) {
+        setSuccess("Password reset link sent! Check your email.");
+      } else {
+        setError(response.error || "Something went wrong.");
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN") {
-        navigate("/dashboard");
-      }
-    });
+  const renderSignInForm = () => (
+    <form onSubmit={handleSignIn} className="signup-form">
+      <h2 className="signup-heading">Sign In</h2>
+      <p className="signup-subtext">
+        Dont have an account?{" "}
+        <Link to="/signup" className="signin-link">
+          Sign up!
+        </Link>
+      </p>
+      <div>
+        <input
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setValidationErrors({
+              email: "",
+              password: "",
+            });
+            setError("");
+          }}
+          type="email"
+          placeholder="Email"
+          className="signup-input"
+        />
+        <div className="password-container">
+          <input
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setValidationErrors({
+                email: "",
+                password: "",
+              });
+              setError("");
+            }}
+            type={passwordVisible ? "text" : "password"}
+            placeholder="Password"
+            className="signup-input"
+          />
+          <i className="eye-icon" onClick={handlePasswordVisibility}>
+            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+          </i>
+        </div>
+        <button type="submit" className="signup-button" disabled={loading}>
+          {loading ? "Signing in ..." : "Sign in"}
+        </button>
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [navigate]);
+        <button
+          type="button"
+          onClick={switchToResetMode}
+          className="forgot-password-link"
+        >
+          Forgot Password?
+        </button>
+
+        {error && <p className="signup-error">{error}</p>}
+        {validationErrors.email && (
+          <p className="signup-error">{validationErrors.email}</p>
+        )}
+        {validationErrors.password && (
+          <p className="signup-error">{validationErrors.password}</p>
+        )}
+      </div>
+    </form>
+  );
+
+  const renderResetForm = () => (
+    <form className="signup-form" onSubmit={handlePasswordReset}>
+      <h2 className="signup-heading">Forgot Password</h2>
+      <p className="signup-subtext">
+        Enter your email address and we will send you a reset link.
+      </p>
+      <div>
+        <input
+          value={email}
+          onChange={handleEmailChange}
+          type="email"
+          placeholder="Email"
+          className="signup-input"
+        />
+
+        <button type="submit" className="signup-button" disabled={loading}>
+          {loading ? "Sending..." : "Send Reset Link"}
+        </button>
+
+        {/* Back to Sign In Link */}
+        <button
+          type="button"
+          onClick={switchToSignInmode}
+          disabled={loading}
+          className="forgot-password-link
+          "
+        >
+          Back to Sign In
+        </button>
+        {error && <p className="signup-error">{error}</p>}
+        {validationErrors.email && (
+          <p className="signup-error">{validationErrors.email}</p>
+        )}
+        {success && <p className="signup-success">{success}</p>}
+      </div>
+    </form>
+  );
 
   return (
     <div className="signup-container">
-      {!showResetForm ? (
-        <form onSubmit={handleSignIn} className="signup-form">
-          <h2 className="signup-heading">Sign In</h2>
-          <p className="signup-subtext">
-            Dont have an account?{" "}
-            <Link to="/signup" className="signin-link">
-              Sign up!
-            </Link>
-          </p>
-          <div>
-            <input
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setValidationErrors({
-                  email: "",
-                  password: "",
-                });
-                setError("");
-              }}
-              type="email"
-              placeholder="Email"
-              className="signup-input"
-            />
-            <div className="password-container">
-              <input
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setValidationErrors({
-                    email: "",
-                    password: "",
-                  });
-                  setError("");
-                }}
-                type={passwordVisible ? "text" : "password"}
-                placeholder="Password"
-                className="signup-input"
-              />
-              <i className="eye-icon" onClick={handlePasswordVisibility}>
-                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-              </i>
-            </div>
-            <button type="submit" className="signup-button">
-              Sign in
-            </button>
-
-            <button
-              type="button"
-              onClick={showForgotPassword}
-              className="forgot-password-link"
-            >
-              Forgot Password?
-            </button>
-
-            {error && <p className="signup-error">{error}</p>}
-            {validationErrors.email && (
-              <p className="signup-error">{validationErrors.email}</p>
-            )}
-            {validationErrors.password && (
-              <p className="signup-error">{validationErrors.password}</p>
-            )}
-          </div>
-        </form>
-      ) : (
-        <form className="signup-form" onSubmit={handleSendResetLink}>
-          <h2 className="signup-heading">Forgot Password</h2>
-          <p className="signup-subtext">
-            Enter your email address and we will send you a reset link.
-          </p>
-          <div>
-            <input type="email" placeholder="Email" className="signup-input" />
-
-            <button
-              type="submit"
-              className="signup-button"
-              disabled={resetLoading}
-            >
-              {resetLoading ? "Sending..." : "Send Reset Link"}
-            </button>
-
-            {/* Back to Sign In Link */}
-            <button
-              type="button"
-              onClick={showSignIn}
-              className="forgot-password-link"
-            >
-              Back to Sign In
-            </button>
-
-            {error && <p className="signup-error">{error}</p>}
-            {success && <p className="signup-success">{success}</p>}
-          </div>
-        </form>
-      )}
+      {formMode === "signin" ? renderSignInForm() : renderResetForm()}
     </div>
   );
 };
