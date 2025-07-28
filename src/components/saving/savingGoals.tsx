@@ -7,6 +7,13 @@ import { supabase } from "../../supabaseClient";
 import { AddGoalForm } from "./AddGoalForm";
 import { GoalCard } from "./GoalCard";
 import { PracticeSideBar } from "../SideBar/SideBar";
+import { useDataContext } from "../../context/DataContext";
+
+import {
+  generateAlertMessages,
+  alertStyles,
+  ALERT_DISPLAY_DURATION,
+} from "./goalAlerts";
 
 export const SavingGoals = () => {
   // State management
@@ -17,102 +24,15 @@ export const SavingGoals = () => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
   const [showAlerts, setShowAlerts] = useState(true);
+  const { connectionStatus, loaded } = useDataContext();
 
-  const alertStyles = {
-    success:
-      "bg-green-50 border border-green-200 text-green-800 rounded-lg p-4 shadow-md",
-    warning:
-      "bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg p-4 shadow-md",
-    error:
-      "bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 shadow-md",
-    info: "bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 shadow-md",
-  };
-  const getAlertMessage = (goal: SavingsGoal) => {
-    if (!goal.deadline) return null;
-
-    const today = new Date();
-    const deadline = new Date(goal.deadline);
-
-    const timeDiff = deadline.getTime() - today.getTime();
-    const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
-    const progressPercent = (goal.saved_amount / goal.target_amount) * 100;
-
-    // Goal completed
-    if (progressPercent >= 100) {
-      return {
-        type: "success",
-        message: `🎉 "${goal.goal_name}" goal achieved!`,
-      };
-    }
-
-    // Overdue
-    if (daysLeft < 0) {
-      return {
-        type: "error",
-        message: `⚠️ "${goal.goal_name}" is ${Math.abs(
-          daysLeft
-        )} days overdue!`,
-      };
-    }
-
-    // Close to deadline
-    if (daysLeft <= 2) {
-      return {
-        type: "warning",
-        message: `⚠️ "${goal.goal_name}" deadline in ${daysLeft} days!`,
-      };
-    }
-
-    // Progress milestones
-
-    if (progressPercent >= 90) {
-      return {
-        type: "info",
-        message: `🔥 "${goal.goal_name}" is almost complete! 90% done!`,
-      };
-    }
-
-    if (progressPercent >= 80) {
-      return {
-        type: "info",
-        message: `🔥 "${goal.goal_name}" is almost complete! 80% done!`,
-      };
-    }
-
-    if (progressPercent >= 70) {
-      return {
-        type: "info",
-        message: `🔥 "${goal.goal_name}" is almost complete! 70% done!`,
-      };
-    }
-
-    if (progressPercent >= 60) {
-      return {
-        type: "info",
-        message: `🔥 "${goal.goal_name}" is almost complete! 60% done!`,
-      };
-    }
-
-    if (progressPercent >= 50) {
-      return {
-        type: "info",
-        message: `🔥 "${goal.goal_name}" is almost complete! 50% done!`,
-      };
-    }
-
-    return null;
-  };
-
-  const alertMessages = goals
-    .map((goal) => getAlertMessage(goal))
-    .filter((message) => message !== null);
+  const alertMessages = generateAlertMessages(goals);
 
   useEffect(() => {
     if (alertMessages.length > 0 && showAlerts) {
       const timer = setTimeout(() => {
         setShowAlerts(false);
-      }, 5000);
+      }, ALERT_DISPLAY_DURATION);
 
       return () => clearTimeout(timer);
     }
@@ -222,7 +142,7 @@ export const SavingGoals = () => {
       // Remove from local state
       setGoals((prev) => prev.filter((goal) => goal.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falied to delete goal");
+      setError(err instanceof Error ? err.message : "Failed to delete goal");
     }
   };
 
@@ -255,10 +175,43 @@ export const SavingGoals = () => {
     }
   };
 
-  if (loading) {
+  if (connectionStatus === "checking") {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-black">Loading your savings goals...</div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-sm text-gray-800">
+            Checking connection status...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (connectionStatus === "error") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-red-500 text-xl mb-4">⚠️</div>
+          <p className="text-sm text-gray-800">
+            Unable to check connection status. Please refresh the page.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Data loading state (connected but data not loaded yet)
+  if (connectionStatus === "connected" && !loading && !loaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-sm text-gray-800">
+            Loading your saving goals...
+          </p>
+        </div>
       </div>
     );
   }

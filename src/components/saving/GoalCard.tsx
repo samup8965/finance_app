@@ -171,7 +171,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
       {/* Progress Section */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">Progress</span>
+          <span className="text-sm font-medium text-gray-700">Progress </span>
           {isEditingSavedAmount ? (
             <div className="flex items-center gap-1">
               <input
@@ -207,6 +207,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
           ) : (
             <div className="flex iems-center gap-1">
               <span className="text-sm text-gray-600">
+                {" "}
                 {formatCurrency(goal.saved_amount)} of{" "}
                 {formatCurrency(goal.target_amount)}
               </span>
