@@ -126,6 +126,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (!response.ok) {
+        console.log("An error");
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
