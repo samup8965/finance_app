@@ -4,6 +4,9 @@ import { useState } from "react";
 import { UserAuth } from "../context/AuthContext.tsx";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+import { IncomeChart } from "./Charts/EntryIncomeChart.tsx";
+import { SavingsProgress } from "./Charts/EntryCategoryChart.tsx";
+
 const Signup = () => {
   // States
 
@@ -104,48 +107,110 @@ const Signup = () => {
   };
 
   return (
-    <div className="signup-container">
-      <form onSubmit={handleSignUp} className="signup-form">
-        <h2 className="signup-heading">Sign Up</h2>
-        <p className="signup-subtext">
-          Already have an account?{" "}
-          <Link to="/signin" className="signin-link">
-            Sign in!
-          </Link>
-        </p>
-        <div>
-          <input
-            value={email}
-            onChange={handleEmailChange}
-            type="email"
-            placeholder="Email"
-            className="signup-input"
-            disabled={loading}
-          />
-          <div className="password-container">
+    <div className="flex min-h-screen">
+      {/* Left Section */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-white px-6 py-12">
+        <form onSubmit={handleSignUp} className="w-full max-w-md space-y-6">
+          <h2 className="text-3xl font-bold text-black">Sign Up</h2>
+          <p className="text-gray-600">
+            Welcome to my personal finance tracker!
+          </p>
+
+          {/* Email */}
+          <div>
+            <label className="block text-sm text-gray-600 font-medium mb-3">
+              Username
+            </label>
             <input
-              value={password}
-              onChange={handlePasswordChange}
-              type={passwordVisible ? "text" : "password"}
-              placeholder="Password"
-              className="signup-input"
+              value={email}
+              onChange={handleEmailChange}
+              type="email"
+              placeholder="Email"
+              className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600"
+              disabled={loading}
             />
-            <i className="eye-icon" onClick={handlePasswordVisibility}>
-              {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-            </i>
           </div>
-          <button type="submit" className="signup-button" disabled={loading}>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm text-gray-600 font-medium mb-3">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                value={password}
+                onChange={handlePasswordChange}
+                type={passwordVisible ? "text" : "password"}
+                placeholder="Password"
+                className="w-full px-4 py-3 text-gray-600 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <div
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 cursor-pointer"
+                onClick={handlePasswordVisibility}
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </div>
+            </div>
+
+            {validationErrors.email && (
+              <p className="text-gray-500 text-sm font-medium mt-2 text-center ">
+                {validationErrors.email}
+              </p>
+            )}
+
+            {validationErrors.password && (
+              <p className="text-gray-500 text-sm font-medium mt-2 text-center ">
+                {validationErrors.password}
+              </p>
+            )}
+          </div>
+
+          {/* General Error */}
+          {error && <p className="text-gray-500 text-sm">{error}</p>}
+
+          <p className="text-right text-sm text-gray-600">
+            Already have an account?{"   "}
+            <Link
+              to="/signin"
+              className="text-blue-600 hover:underline font-semibold"
+            >
+              Sign in!
+            </Link>
+          </p>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+            disabled={loading}
+          >
             {loading ? "Creating account..." : "Sign Up"}
           </button>
-          {error && <p className="signup-error">{error}</p>}
-          {validationErrors.email && (
-            <p className="signup-error">{validationErrors.email}</p>
-          )}
-          {validationErrors.password && (
-            <p className="signup-error">{validationErrors.password}</p>
-          )}
+        </form>
+      </div>
+
+      {/* Right Section */}
+      <div className="hidden md:flex w-1/2 flex-col justify-center items-center bg-blue-600 text-white p-10">
+        <div className="relative w-full max-w-md">
+          <IncomeChart />
+
+          <div className="absolute -bottom-25 -right-25">
+            <div className="relative">
+              <SavingsProgress />
+
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-black font-bold text-sm leading-tight">
+                <div className="text-xl">60%</div>
+                <div>Total savings</div>
+              </div>
+            </div>
+          </div>
         </div>
-      </form>
+
+        <div className="mt-35">
+          <h3 className="text-2xl font-bold text-center">
+            Financial planning that helps you reach your goals.
+          </h3>
+        </div>
+      </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import TopBar from "./TopBar";
 import Accountbalance from "./Accountbalance";
 import { RecentTransactions } from "./RecentTransactions";
 import MonthlySummary from "./MonthlySummary";
-import RenderSavingsGoal from "./RenderSavingsGoal";
+import SavingsGoals from "./RenderSavingsGoal";
 
 const Overview = () => {
   const { hasError, setError, showError } = useDataContext();
@@ -31,16 +31,24 @@ const Overview = () => {
 
       <div className="max-w-4xl space-y-6 px-4">
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">{Accountbalance()}</div>
-          <div className="lg:col-span-1">{MonthlySummary()}</div>
+          <div className="lg:col-span-2">
+            <Accountbalance />
+          </div>
+          <div className="lg:col-span-1">
+            <MonthlySummary />
+          </div>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">{RenderSavingsGoal()}</div>
+          <div className="lg:col-span-2">
+            <SavingsGoals />
+          </div>
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-3">{RecentTransactions()}</div>
+          <div className="lg:col-span-3">
+            <RecentTransactions />
+          </div>
         </section>
       </div>
     </div>

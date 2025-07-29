@@ -110,7 +110,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     console.log("🔍 Checking for existing session...");
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log(session);
       setSession(session);
       setLoading(false);
     });
