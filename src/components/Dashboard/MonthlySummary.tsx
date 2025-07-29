@@ -1,7 +1,7 @@
 import { useDataContext } from "../../context/DataContext";
 import { useNavigate } from "react-router-dom";
 
-const renderMonthlySummary = () => {
+const MonthlySummary = () => {
   const { recentTransactions, connectionStatus } = useDataContext();
   const navigate = useNavigate();
 
@@ -125,4 +125,4 @@ const renderMonthlySummary = () => {
   );
 };
 
-export default renderMonthlySummary;
+export default MonthlySummary;

@@ -4,6 +4,9 @@ import { useState } from "react";
 import { UserAuth } from "../context/AuthContext.tsx";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+import { IncomeChart } from "./Charts/EntryIncomeChart.tsx";
+import { SavingsProgress } from "./Charts/EntryCategoryChart.tsx";
+
 type FormMode = "signin" | "reset";
 const Signin = () => {
   // States
@@ -129,111 +132,177 @@ const Signin = () => {
   };
 
   const renderSignInForm = () => (
-    <form onSubmit={handleSignIn} className="signup-form">
-      <h2 className="signup-heading">Sign In</h2>
-      <p className="signup-subtext">
-        Dont have an account?{" "}
-        <Link to="/signup" className="signin-link">
-          Sign up!
-        </Link>
-      </p>
+    <form onSubmit={handleSignIn} className="w-full max-w-md space-y-6">
+      <h2 className="text-3xl font-bold text-black">Sign In</h2>
+
+      <p className="text-gray-600">Welcome back! Please enter your details.</p>
+
+      {/* Email */}
       <div>
-        <input
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setValidationErrors({
-              email: "",
-              password: "",
-            });
-            setError("");
-          }}
-          type="email"
-          placeholder="Email"
-          className="signup-input"
-        />
-        <div className="password-container">
-          <input
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setValidationErrors({
-                email: "",
-                password: "",
-              });
-              setError("");
-            }}
-            type={passwordVisible ? "text" : "password"}
-            placeholder="Password"
-            className="signup-input"
-          />
-          <i className="eye-icon" onClick={handlePasswordVisibility}>
-            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-          </i>
-        </div>
-        <button type="submit" className="signup-button" disabled={loading}>
-          {loading ? "Signing in ..." : "Sign in"}
-        </button>
-
-        <button
-          type="button"
-          onClick={switchToResetMode}
-          className="forgot-password-link"
-        >
-          Forgot Password?
-        </button>
-
-        {error && <p className="signup-error">{error}</p>}
-        {validationErrors.email && (
-          <p className="signup-error">{validationErrors.email}</p>
-        )}
-        {validationErrors.password && (
-          <p className="signup-error">{validationErrors.password}</p>
-        )}
-      </div>
-    </form>
-  );
-
-  const renderResetForm = () => (
-    <form className="signup-form" onSubmit={handlePasswordReset}>
-      <h2 className="signup-heading">Forgot Password</h2>
-      <p className="signup-subtext">
-        Enter your email address and we will send you a reset link.
-      </p>
-      <div>
+        <label className="block text-sm text-gray-600 font-medium mb-3">
+          Email
+        </label>
         <input
           value={email}
           onChange={handleEmailChange}
           type="email"
           placeholder="Email"
-          className="signup-input"
+          className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600"
+          disabled={loading}
+        />
+      </div>
+
+      {/* Password */}
+      <div>
+        <label className="block text-sm text-gray-600 font-medium mb-3">
+          Password
+        </label>
+        <div className="relative">
+          <input
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setValidationErrors({ email: "", password: "" });
+              setError("");
+            }}
+            type={passwordVisible ? "text" : "password"}
+            placeholder="Password"
+            className="w-full px-4 py-3 text-gray-600 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <div
+            className="absolute inset-y-0 right-3 flex items-center text-gray-500 cursor-pointer"
+            onClick={handlePasswordVisibility}
+          >
+            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+          </div>
+        </div>
+
+        {validationErrors.email && (
+          <p className="text-gray-500 text-sm font-medium mt-2 text-center">
+            {validationErrors.email}
+          </p>
+        )}
+        {validationErrors.password && (
+          <p className="text-gray-500 text-sm font-medium mt-2 text-center">
+            {validationErrors.password}
+          </p>
+        )}
+      </div>
+
+      {/* General Error */}
+      {error && <p className="text-gray-500 text-sm text-center">{error}</p>}
+
+      {/* Forgot password */}
+      <button
+        type="button"
+        onClick={switchToResetMode}
+        className="text-blue-600 hover:underline font-semibold text-sm"
+      >
+        Forgot Password?
+      </button>
+
+      {/* Submit */}
+      <button
+        type="submit"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+        disabled={loading}
+      >
+        {loading ? "Signing in..." : "Sign In"}
+      </button>
+
+      <p className="text-gray-600 text-center">
+        Don’t have an account?{" "}
+        <Link
+          to="/signup"
+          className="text-blue-600 hover:underline font-semibold"
+        >
+          Sign up!
+        </Link>
+      </p>
+    </form>
+  );
+
+  const renderResetForm = () => (
+    <form className="w-full max-w-md space-y-6" onSubmit={handlePasswordReset}>
+      <h2 className="text-3xl font-bold text-black">Forgot Password</h2>
+      <p className="text-gray-600">
+        Enter your email address and we’ll send you a reset link.
+      </p>
+
+      <div>
+        <label className="block text-sm text-gray-600 font-medium mb-3">
+          Email
+        </label>
+        <input
+          value={email}
+          onChange={handleEmailChange}
+          type="email"
+          placeholder="Email"
+          className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600"
+          disabled={loading}
         />
 
-        <button type="submit" className="signup-button" disabled={loading}>
-          {loading ? "Sending..." : "Send Reset Link"}
-        </button>
-
-        {/* Back to Sign In Link */}
-        <button
-          type="button"
-          onClick={switchToSignInmode}
-          disabled={loading}
-          className="forgot-password-link
-          "
-        >
-          Back to Sign In
-        </button>
-        {error && <p className="signup-error">{error}</p>}
         {validationErrors.email && (
-          <p className="signup-error">{validationErrors.email}</p>
+          <p className="text-gray-500 text-sm font-medium mt-2 text-center">
+            {validationErrors.email}
+          </p>
         )}
-        {success && <p className="signup-success">{success}</p>}
+        {error && <p className="text-gray-500 text-sm text-center">{error}</p>}
+        {success && (
+          <p className="text-green-600 text-sm font-medium text-center">
+            {success}
+          </p>
+        )}
       </div>
+
+      <button
+        type="submit"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+        disabled={loading}
+      >
+        {loading ? "Sending..." : "Send Reset Link"}
+      </button>
+
+      <button
+        type="button"
+        onClick={switchToSignInmode}
+        disabled={loading}
+        className="text-blue-600 hover:underline font-semibold text-sm"
+      >
+        Back to Sign In
+      </button>
     </form>
   );
 
   return (
-    <div className="signup-container">
-      {formMode === "signin" ? renderSignInForm() : renderResetForm()}
+    <div className="flex min-h-screen">
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-white px-6 py-12">
+        {formMode === "signin" ? renderSignInForm() : renderResetForm()}
+      </div>
+
+      {/* Right Section */}
+      <div className="hidden md:flex w-1/2 flex-col justify-center items-center bg-blue-600 text-white p-10">
+        <div className="relative w-full max-w-md">
+          <IncomeChart />
+
+          <div className="absolute -bottom-25 -right-25">
+            <div className="relative">
+              <SavingsProgress />
+
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-black font-bold text-sm leading-tight">
+                <div className="text-xl">60%</div>
+                <div>Total savings</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-35">
+          <h3 className="text-2xl font-bold text-center">
+            Financial planning that helps you reach your goals.
+          </h3>
+        </div>
+      </div>
     </div>
   );
 };
