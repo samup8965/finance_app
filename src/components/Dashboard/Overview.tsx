@@ -8,7 +8,6 @@ import SavingsGoals from "./RenderSavingsGoal";
 const Overview = () => {
   const { hasError, setError, showError } = useDataContext();
   // States for rendering saving goals
-  console.log(hasError);
 
   return (
     <div className="bg-white rounded-lg pb-4 shadow h-[200vh]">

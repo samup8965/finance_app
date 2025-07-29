@@ -3,8 +3,6 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.SUPABASE_URL;
 const serviceAnonKey = process.env.SUPABASE_ANON_KEY;
 
-const supabase = createClient(supabaseUrl, serviceAnonKey);
-
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") {
@@ -17,6 +15,14 @@ export default async function handler(req, res) {
     }
 
     const token = authHeader.replace("Bearer ", "");
+
+    const supabase = createClient(supabaseUrl, serviceAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
 
     const {
       data: { user },

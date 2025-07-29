@@ -186,7 +186,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
         return;
       }
-      console.log("balance data", recurringData);
 
       // Transform and set state
       const transformedAccounts =

@@ -40,7 +40,7 @@ const MonthlySummary = () => {
         {connectionStatus === "connected" && (
           <button
             className="text-sm font-medium text-blue-600 hover:underline"
-            onClick={() => navigate("/transactions")}
+            onClick={() => navigate("/spendingTrends")}
           >
             View more
           </button>

@@ -151,7 +151,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     if (error) {
       console.error("there was an error:", error);
     }
-    console.log(session);
   };
 
   const resetPassword = async (email: string): Promise<ResetPasswordResult> => {

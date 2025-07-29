@@ -3,7 +3,7 @@ import { supabase } from "../../supabaseClient";
 import { useDataContext } from "../../context/DataContext";
 import { type SavingsGoal } from "../../types/savingstypes";
 
-const RenderSavingsGoals = () => {
+const SavingsGoals = () => {
   const { setError } = useDataContext();
 
   // States for rendering saving goals
@@ -105,4 +105,4 @@ const RenderSavingsGoals = () => {
   );
 };
 
-export default RenderSavingsGoals;
+export default SavingsGoals;
