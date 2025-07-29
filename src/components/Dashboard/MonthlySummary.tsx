@@ -108,7 +108,7 @@ const renderMonthlySummary = () => {
           </div>
         </>
       ) : (
-        <div className="text-center py-6">
+        <div className="text-center py-16">
           <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
             <span className="text-gray-400 text-xl">
               {connectionStatus === "connected" ? "📊" : "🔗"}

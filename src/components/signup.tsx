@@ -1,12 +1,8 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { UserAuth } from "../context/AuthContext.tsx";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
-// Counldnt figure out how to redirect centrally need to figure that out
-import { useEffect } from "react";
-import { supabase } from "../supabaseClient";
 
 const Signup = () => {
   // States
@@ -27,21 +23,36 @@ const Signup = () => {
 
   const { signUpNewUser } = UserAuth();
 
-  const navigate = useNavigate();
+  const clearMessages = () => {
+    setError("");
+    setValidationErrors({ email: "", password: "" });
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    clearMessages();
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    clearMessages();
+  };
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    clearMessages();
     setLoading(true);
 
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
 
-    setValidationErrors({
-      email: emailError,
-      password: passwordError,
-    });
     // Stops the request to Supabase
     if (emailError || passwordError) {
+      setValidationErrors({
+        email: emailError,
+        password: passwordError,
+      });
+      setLoading(false);
       return;
     }
 
@@ -77,7 +88,7 @@ const Signup = () => {
       return "Password is required";
     }
     if (password.length < 8) {
-      return "Password must be at least 6 characters";
+      return "Password must be at least 8 characters";
     }
     if (!/[A-Z]/.test(password)) {
       return "Password must contain at least one capital letter";
@@ -92,18 +103,6 @@ const Signup = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN") {
-        navigate("/dashboard");
-      }
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [navigate]);
-
   return (
     <div className="signup-container">
       <form onSubmit={handleSignUp} className="signup-form">
@@ -116,28 +115,17 @@ const Signup = () => {
         </p>
         <div>
           <input
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setValidationErrors({
-                email: "",
-                password: "",
-              });
-              setError("");
-            }}
+            value={email}
+            onChange={handleEmailChange}
             type="email"
             placeholder="Email"
             className="signup-input"
+            disabled={loading}
           />
           <div className="password-container">
             <input
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setValidationErrors({
-                  email: "",
-                  password: "",
-                });
-                setError("");
-              }}
+              value={password}
+              onChange={handlePasswordChange}
               type={passwordVisible ? "text" : "password"}
               placeholder="Password"
               className="signup-input"
@@ -146,8 +134,8 @@ const Signup = () => {
               {passwordVisible ? <FaEyeSlash /> : <FaEye />}
             </i>
           </div>
-          <button type="submit" className="signup-button">
-            Sign Up
+          <button type="submit" className="signup-button" disabled={loading}>
+            {loading ? "Creating account..." : "Sign Up"}
           </button>
           {error && <p className="signup-error">{error}</p>}
           {validationErrors.email && (
