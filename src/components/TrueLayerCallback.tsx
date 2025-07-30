@@ -4,7 +4,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDataContext } from "../context/DataContext";
-import { supabase } from "../supabaseClient";
+import { UserAuth } from "../context/AuthContext";
 
 export const TrueLayerCallback = () => {
   const navigate = useNavigate();
@@ -12,24 +12,22 @@ export const TrueLayerCallback = () => {
 
   // Need the session user id to prove who the user is before sending a request
 
+  const { session, loading } = UserAuth();
+
   const { connectionStatus, loaded, refreshData } = useDataContext();
 
   const hasExchangedCode = useRef(false);
 
   useEffect(() => {
     const handleCallback = async () => {
-      // Grabbing the session and access token so I can prove which user is making the request
+      if (!session || hasExchangedCode.current) return;
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      console.log(session);
       const token = session?.access_token;
+      console.log(token);
 
       const code = searchParams.get("code");
       const error = searchParams.get("error");
-
-      console.log("Redirect received code:", code);
-      console.log("Redirect received error:", error);
 
       if (error) {
         console.error("TrueLayer error:", error);
@@ -45,7 +43,7 @@ export const TrueLayerCallback = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer${token}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ code }),
           });
@@ -71,8 +69,16 @@ export const TrueLayerCallback = () => {
       }
     };
 
-    handleCallback();
-  }, [searchParams]);
+    // Need to wait for session to be ready
+
+    if (!loading) {
+      if (session) {
+        handleCallback();
+      } else {
+        navigate("/signup");
+      }
+    }
+  }, [loading, session, searchParams]);
 
   // Handling sucessful navigation only after connection and loaded data
   useEffect(() => {
