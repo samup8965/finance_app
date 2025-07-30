@@ -10,8 +10,8 @@ const Connect = () => {
   const { session } = UserAuth();
 
   const handleConnectBank = () => {
-    window.location.href =
-      "https://auth.truelayer.com/?response_type=code&client_id=personalfinancetracker-561293&scope=info%20accounts%20balance%20cards%20transactions%20direct_debits%20standing_orders%20offline_access&redirect_uri=http://localhost:5173/truelayercallback&providers=uk-ob-all%20uk-oauth-all";
+    window.location.href = window.location.href =
+      "https://auth.truelayer.com/?response_type=code&client_id=personalfinancetracker-561293&scope=info%20accounts%20balance%20cards%20transactions%20direct_debits%20standing_orders%20offline_access&redirect_uri=https://finance-app-steel-seven.vercel.app/truelayercallback&providers=uk-ob-all%20uk-oauth-all";
   };
 
   const handleDisconnect = async () => {
