@@ -7,10 +7,21 @@ const supabase = createClient(supabaseUrl, serviceRoleKey);
 
 export default async function handler(req, res) {
   try {
-    // Set CORS headers
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "https://finance-app-steel-seven.vercel.app",
+    ];
+
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+
     res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
     res.setHeader("Access-Control-Allow-Credentials", "true");
 
     // Handle preflight OPTIONS request
@@ -56,55 +67,131 @@ export default async function handler(req, res) {
     console.log("TrueLayer response status:", tokenResponse.status);
 
     const tokenData = await tokenResponse.json();
-    console.log(tokenData);
+    console.log("TrueLayer token data received");
 
     if (!tokenResponse.ok) {
       console.log("TrueLayer error:", tokenData);
       return res.status(tokenResponse.status).json(tokenData);
     }
 
-    // Saving to Database
-
-    // Grabbing the session access token
     const authHeader = req.headers.authorization;
+    console.log("Auth header present:", !!authHeader);
 
-    const token = authHeader.replace("Bearer", "");
-    const {
-      data: { user },
-    } = await supabase.auth.getUser(token);
-    const userId = user.id;
-
-    // No encryption implemented !!
-    const encryptedAccessToken = tokenData.access_token;
-    const encryptedRefreshToken = tokenData.refresh_token;
-
-    const { data, error } = await supabase.from("bank_connection").insert({
-      user_id: userId,
-      access_token: encryptedAccessToken,
-      refresh_token: encryptedRefreshToken,
-      expires_in: tokenData.expires_in,
-    });
-    if (error) {
-      console.log("Supabase insert error", { data, error });
+    if (!authHeader) {
+      console.log("Missing authorization header");
+      return res.status(401).json({ error: "Missing authorization header" });
     }
 
-    // We set cookies by using a Set-cookie header on a request so the browser can do it
+    if (!authHeader.startsWith("Bearer ")) {
+      console.log("Invalid authorization header format");
+      return res
+        .status(401)
+        .json({ error: "Invalid authorization header format" });
+    }
 
-    // We store the access token give it the HTTP flag
+    const token = authHeader.replace("Bearer ", "").trim();
+    console.log("Extracted token length:", token.length);
+    console.log("Token starts with:", token.substring(0, 10) + "...");
 
-    // Block cross site requests
+    if (!token || token.length < 10) {
+      console.log("Invalid or missing token");
+      return res.status(401).json({ error: "Invalid or missing token" });
+    }
 
-    const isProduction = process.env.TRUELAYER_ENVIRONMENT === "production";
-    const isSecure = isProduction; // Only secure in production
-    const sameSite = isProduction ? "None" : "Lax"; // None for cross-origin in production, Lax for development
+    let user;
+    try {
+      console.log("Attempting to get user with token...");
+      const { data, error } = await supabase.auth.getUser(token);
+
+      console.log("Supabase auth response:", {
+        hasData: !!data,
+        hasUser: !!data?.user,
+        hasError: !!error,
+        error: error?.message,
+      });
+
+      if (error) {
+        console.log("Supabase auth error:", error);
+        return res.status(401).json({
+          error: "Authentication failed",
+          details: error.message,
+        });
+      }
+
+      if (!data?.user) {
+        console.log("No user found for token");
+        return res.status(401).json({
+          error: "Invalid token - no user found",
+        });
+      }
+
+      user = data.user;
+      console.log("Successfully authenticated user:", user.id);
+    } catch (authError) {
+      console.error("Authentication error:", authError);
+      return res.status(401).json({
+        error: "Authentication failed",
+        details: authError.message,
+      });
+    }
+
+    const userId = user.id;
+
+    try {
+      // No encryption implemented !!
+      const encryptedAccessToken = tokenData.access_token;
+      const encryptedRefreshToken = tokenData.refresh_token;
+
+      console.log("Inserting bank connection for user:", userId);
+
+      const { data, error } = await supabase.from("bank_connection").insert({
+        user_id: userId,
+        access_token: encryptedAccessToken,
+        refresh_token: encryptedRefreshToken,
+        expires_in: tokenData.expires_in,
+      });
+
+      if (error) {
+        console.log("Supabase insert error:", error);
+        return res.status(500).json({
+          error: "Failed to save bank connection",
+          details: error.message,
+        });
+      }
+
+      console.log("Successfully saved bank connection");
+    } catch (dbError) {
+      console.error("Database error:", dbError);
+      return res.status(500).json({
+        error: "Database operation failed",
+        details: dbError.message,
+      });
+    }
+
+    const isProduction = process.env.NODE_ENV === "production";
+    console.log("Environment - Production:", isProduction);
+
+    const cookieSettings = {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "Lax" : "Lax",
+      path: "/",
+    };
+
+    const accessTokenMaxAge = tokenData.expires_in || 3600;
+    const refreshTokenMaxAge = 7 * 24 * 3600;
 
     res.setHeader("Set-Cookie", [
       `truelayer_access_token=${tokenData.access_token}; HttpOnly; ${
-        isSecure ? "Secure;" : ""
-      } SameSite=${sameSite}; Max-Age=${tokenData.expires_in || 3600}; Path=/`,
+        cookieSettings.secure ? "Secure;" : ""
+      } SameSite=${
+        cookieSettings.sameSite
+      }; Max-Age=${accessTokenMaxAge}; Path=${cookieSettings.path}`,
       `truelayer_refresh_token=${tokenData.refresh_token || ""}; HttpOnly; ${
-        isSecure ? "Secure;" : ""
-      } SameSite=${sameSite}; Max-Age=${7 * 24 * 3600}; Path=/`,
+        cookieSettings.secure ? "Secure;" : ""
+      } SameSite=${
+        cookieSettings.sameSite
+      }; Max-Age=${refreshTokenMaxAge}; Path=${cookieSettings.path}`,
     ]);
 
     console.log("✅ Tokens stored in HTTP-only cookies");
@@ -116,8 +203,10 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Function error:", error);
     return res.status(500).json({
-      error: error.message,
-      stack: error.stack,
+      error: "Internal server error",
+      message: error.message,
+      // Don't expose stack trace in production
+      ...(process.env.NODE_ENV !== "production" && { stack: error.stack }),
     });
   }
 }
