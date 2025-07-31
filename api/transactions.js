@@ -83,6 +83,7 @@ export default async function handler(req, res) {
 
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        console.log("Missing authentication token");
         return res.status(401).json({ error: "Missing authentication token" });
       }
 
