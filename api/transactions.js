@@ -142,6 +142,15 @@ export default async function handler(req, res) {
           console.error("No access token returned from refresh");
         }
 
+        const token = authHeader.replace("Bearer ", "");
+        const supabase = createClient(supabaseUrl, serviceAnonKey, {
+          global: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        });
+
         // Store new access token in Database as well for source of truth in case cookies fail
 
         const { error: updateError } = await supabase
