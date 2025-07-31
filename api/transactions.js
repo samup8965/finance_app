@@ -69,7 +69,7 @@ export default async function handler(req, res) {
 
     // Get tokens from cookies
     let accessToken = req.cookies.truelayer_access_token;
-    const refreshToken = req.cookies.truelayer_refresh_token;
+    let refreshToken = req.cookies.truelayer_refresh_token;
 
     console.log("Access token exists:", !!accessToken);
     console.log("Refresh token exists:", !!refreshToken);
