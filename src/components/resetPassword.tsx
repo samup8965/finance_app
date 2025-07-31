@@ -84,10 +84,19 @@ const ResetPassword = () => {
   }, [navigate]);
 
   return (
-    <div className="signup-container">
-      <form onSubmit={handlePasswordUpdate} className="signup-form">
-        <h2 className="signup-heading">Reset your password</h2>
+    <div className="flex min-h-screen justify-center items-center bg-white px-6 py-12">
+      <form
+        onSubmit={handlePasswordUpdate}
+        className="w-full max-w-md space-y-6"
+      >
+        <h2 className="text-3xl font-bold text-black">Reset your password</h2>
+        <p className="text-gray-600">Enter your new password below.</p>
+
+        {/* New Password */}
         <div>
+          <label className="block text-sm text-gray-600 font-medium mb-3">
+            New Password
+          </label>
           <input
             onChange={(e) => {
               setNewPassword(e.target.value);
@@ -98,35 +107,57 @@ const ResetPassword = () => {
               setServerError("");
             }}
             type="password"
-            placeholder="Password"
-            className="signup-input"
+            placeholder="New Password"
+            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600"
           />
-          <div className="password-container">
-            <input
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-                setValidationErrors({
-                  password: "",
-                  confirmPassword: "",
-                });
-                setServerError("");
-              }}
-              type={"password"}
-              placeholder="Confirm Password"
-              className="signup-input"
-            />
-          </div>
-          <button type="submit" className="signup-button">
-            Reset Password
-          </button>
-          {serverError && <p className="signup-error">{serverError}</p>}
-          {validationErrors.password && (
-            <p className="signup-error">{validationErrors.password}</p>
-          )}
-          {validationErrors.confirmPassword && (
-            <p className="signup-error">{validationErrors.confirmPassword}</p>
-          )}
         </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label className="block text-sm text-gray-600 font-medium mb-3">
+            Confirm Password
+          </label>
+          <input
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              setValidationErrors({
+                password: "",
+                confirmPassword: "",
+              });
+              setServerError("");
+            }}
+            type="password"
+            placeholder="Confirm Password"
+            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-600"
+          />
+        </div>
+
+        {/* Validation Errors */}
+        {validationErrors.password && (
+          <p className="text-gray-500 text-sm font-medium text-center">
+            {validationErrors.password}
+          </p>
+        )}
+        {validationErrors.confirmPassword && (
+          <p className="text-gray-500 text-sm font-medium text-center">
+            {validationErrors.confirmPassword}
+          </p>
+        )}
+
+        {/* Server Error */}
+        {serverError && (
+          <p className="text-gray-500 text-sm font-medium text-center">
+            {serverError}
+          </p>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+        >
+          Reset Password
+        </button>
       </form>
     </div>
   );

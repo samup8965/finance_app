@@ -21,8 +21,12 @@ export const getMonthlyIncome = (transactions: Transaction[]) => {
     .map(([month, income]) => ({
       month,
       income: parseFloat(income.toFixed(2)),
+      sortDate: new Date(`${month} 01`),
     }))
-    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+    .sort(
+      (a, b) => new Date(a.sortDate).getTime() - new Date(b.sortDate).getTime()
+    )
+    .map(({ month, income }) => ({ month, income }));
 };
 
 export const getMonthlyExpenses = (transactions: Transaction[]) => {
@@ -55,8 +59,12 @@ export const getMonthlyExpenses = (transactions: Transaction[]) => {
     .map(([month, spending]) => ({
       month,
       spending: parseFloat(spending.toFixed(2)),
+      sortDate: new Date(`${month} 01`),
     }))
-    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+    .sort(
+      (a, b) => new Date(a.sortDate).getTime() - new Date(b.sortDate).getTime()
+    )
+    .map(({ month, spending }) => ({ month, spending }));
 
   // Here I convert our flat object using .entries into an array of key-value pairs
 
@@ -109,6 +117,10 @@ export const getMonthlyBalance = (transactions: Transaction[]) => {
     .map(([month, data]) => ({
       month,
       balance: parseFloat((data.income - data.expenses).toFixed(2)),
+      sortDate: new Date(`${month} 01`), // convert May 2024 to May 01 2024
     }))
-    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+    .sort(
+      (a, b) => new Date(a.sortDate).getTime() - new Date(b.sortDate).getTime()
+    )
+    .map(({ month, balance }) => ({ month, balance }));
 };

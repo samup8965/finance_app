@@ -73,7 +73,6 @@ const Accountbalance = () => {
                   tick={{ fontSize: 12, fill: "#9ca3af" }}
                 />
 
-                {/* Y Axis with 100s steps but visually hidden */}
                 <YAxis
                   tick={{ fontSize: 12 }}
                   tickLine={false}
@@ -81,7 +80,6 @@ const Accountbalance = () => {
                   domain={[0, (dataMax) => Math.ceil(dataMax / 100) * 100]}
                 />
 
-                {/* Bars */}
                 <Bar dataKey="balance" radius={[4, 4, 0, 0]} maxBarSize={40}>
                   {monthlyData.map((entry, index) => {
                     const isCurrentMonth =

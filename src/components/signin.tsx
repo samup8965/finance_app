@@ -299,7 +299,7 @@ const Signin = () => {
 
         <div className="mt-35">
           <h3 className="text-2xl font-bold text-center">
-            Financial planning that helps you reach your goals.
+            Financial clarity, one goal at a time.
           </h3>
         </div>
       </div>

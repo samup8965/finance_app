@@ -22,8 +22,6 @@ const Signup = () => {
   // Password visible state
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
-  console.log(loading);
-
   const { signUpNewUser } = UserAuth();
 
   const clearMessages = () => {
