@@ -11,6 +11,7 @@ export default async function handler(req, res) {
 
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.log("Missing auth token");
       return res.status(401).json({ error: "Missing authentication token" });
     }
 
@@ -30,6 +31,7 @@ export default async function handler(req, res) {
     } = await supabase.auth.getUser(token);
 
     if (authError) {
+      console.log("Invalid or expired token", authError);
       return res.status(401).json({ error: "Invalid or expired token" });
     }
 
