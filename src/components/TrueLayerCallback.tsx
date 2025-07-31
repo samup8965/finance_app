@@ -22,9 +22,7 @@ export const TrueLayerCallback = () => {
     const handleCallback = async () => {
       if (!session || hasExchangedCode.current) return;
 
-      console.log(session);
       const token = session?.access_token;
-      console.log(token);
 
       const code = searchParams.get("code");
       const error = searchParams.get("error");

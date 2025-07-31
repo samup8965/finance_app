@@ -82,7 +82,6 @@ export default async function handler(req, res) {
       // Some checks
 
       const authHeader = req.headers.authorization;
-      console.log(authHeader);
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         console.log("Missing authentication token");
         return res.status(401).json({ error: "Missing authentication token" });
@@ -113,6 +112,7 @@ export default async function handler(req, res) {
         .from("bank_connection")
         .select("access_token, refresh_token")
         .eq("user_id", user.id);
+      console.log("Data base output", bankConnection);
 
       if (dbError) {
         console.error("Database error:", dbError);
