@@ -22,7 +22,7 @@ const NetBalanceChart = () => {
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-1">
-          Net Balance
+          Monthly Net Balance
         </h3>
         <div className="text-3xl font-bold text-gray-900">
           {currentBalance < 0 && <span className="text-black-500">-</span>}£

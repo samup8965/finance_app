@@ -1,5 +1,10 @@
 // API handler for fetching recurring payments (standing orders + direct debits)
 
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const serviceAnonKey = process.env.SUPABASE_ANON_KEY;
+
 export default async function handler(req, res) {
   console.log("fetching recurring payments");
 
@@ -62,6 +67,60 @@ export default async function handler(req, res) {
 
     console.log("Access token exists:", !!accessToken);
     console.log("Refresh token exists:", !!refreshToken);
+
+    if (!accessToken && !refreshToken) {
+      console.log(" No tokens in cookies, checking database..");
+
+      // Some checks
+
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Missing authentication token" });
+      }
+
+      const token = authHeader.replace("Bearer ", "");
+      const supabase = createClient(supabaseUrl, serviceAnonKey, {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      });
+
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser(token);
+
+      if (authError) {
+        console.error("Auth Error", authError);
+        return res.status(401).json({ error: authError });
+      }
+
+      // Fetch the tokens from the database
+
+      const { data: bankConnection, error: dbError } = await supabase
+        .from("bank_connection")
+        .select("access_token, refresh_token")
+        .eq("user_id", user.id);
+
+      if (dbError) {
+        console.error("Database error:", dbError);
+        return res
+          .status(404)
+          .json({ error: "No bank connection found in database" });
+      }
+
+      if (
+        bankConnection &&
+        bankConnection.access_token &&
+        bankConnection.refresh_token
+      ) {
+        accessToken = bankConnection.access_token;
+        refreshToken = bankConnection.refresh_token;
+        console.log("Retrieved tokens from database successfully");
+      }
+    }
 
     if (!accessToken && refreshToken) {
       try {
