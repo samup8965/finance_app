@@ -90,8 +90,6 @@ export default async function handler(req, res) {
     }
 
     const token = authHeader.replace("Bearer ", "").trim();
-    console.log("Extracted token length:", token.length);
-    console.log("Token starts with:", token.substring(0, 10) + "...");
 
     if (!token || token.length < 10) {
       console.log("Invalid or missing token");

@@ -157,20 +157,26 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
       const transactionResponse = await fetch("/api/transactions", {
         method: "GET",
-        credentials: "include", // for cookies
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
       });
 
       const transactionData = await transactionResponse.json();
 
       const balanceResponse = await fetch("/api/balance", {
         method: "GET",
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
       });
       const balanceData = await balanceResponse.json();
 
       const recurringResponse = await fetch("/api/recurring_payments", {
         method: "GET",
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
       });
 
       const recurringData = await recurringResponse.json();
