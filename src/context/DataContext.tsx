@@ -54,6 +54,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [lastUpdated, setUpdated] = useState("");
 
   const { session } = UserAuth();
+  console.log(session?.access_token);
 
   // API call to fetch the data
 
