@@ -142,6 +142,21 @@ export default async function handler(req, res) {
           console.error("No access token returned from refresh");
         }
 
+        // Store new access token in Database as well for source of truth in case cookies fail
+
+        const { error: updateError } = await supabase
+          .from("bank_connection")
+          .update({
+            access_token: accessToken,
+          })
+          .eq("user_id", user.id);
+
+        if (updateError) {
+          console.error("Failed to update token in database:", updateError);
+        } else {
+          console.log("Successfully updated access token in database");
+        }
+
         // Now we can set new access token as cookie
 
         // Set the new access token as a cookie
