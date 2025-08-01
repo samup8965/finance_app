@@ -10,7 +10,6 @@ const IncomeChart = () => {
   const currentMonth =
     incomeData.length > 0 ? incomeData[incomeData.length - 1].income : 0;
 
-  console.log(currentMonth);
   const previousMonth =
     incomeData.length > 1 ? incomeData[incomeData.length - 2].income : 0;
 

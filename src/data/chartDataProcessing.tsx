@@ -17,6 +17,17 @@ export const getMonthlyIncome = (transactions: Transaction[]) => {
       return acc;
     }, {} as Record<string, number>);
 
+  // Ensure Current month is always included
+
+  const currentMonth = new Date().toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+
+  if (!monthlyData[currentMonth]) {
+    monthlyData[currentMonth] = 0;
+  }
+
   return Object.entries(monthlyData)
     .map(([month, income]) => ({
       month,
@@ -54,6 +65,17 @@ export const getMonthlyExpenses = (transactions: Transaction[]) => {
       // By the end we get one Object
       // { "Jan 2024": 80, "Feb 2024": 100 } and so on
     }, {} as Record<string, number>);
+
+  // Ensure Current month is always included
+
+  const currentMonth = new Date().toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+
+  if (!monthlyData[currentMonth]) {
+    monthlyData[currentMonth] = 0;
+  }
 
   return Object.entries(monthlyData)
     .map(([month, spending]) => ({
@@ -112,6 +134,17 @@ export const getMonthlyBalance = (transactions: Transaction[]) => {
 
     return acc;
   }, {} as Record<string, { income: number; expenses: number }>);
+
+  // Ensure Current month is always included
+
+  const currentMonth = new Date().toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+
+  if (!monthlyData[currentMonth]) {
+    monthlyData[currentMonth] = { income: 0, expenses: 0 };
+  }
 
   return Object.entries(monthlyData)
     .map(([month, data]) => ({
