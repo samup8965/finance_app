@@ -70,6 +70,7 @@ export default async function handler(req, res) {
     // Get tokens from cookies
     let accessToken = req.cookies.truelayer_access_token;
     let refreshToken = req.cookies.truelayer_refresh_token;
+    const authHeader = req.headers.authorization;
 
     console.log("Access token exists:", !!accessToken);
     console.log("Refresh token exists:", !!refreshToken);
@@ -81,7 +82,6 @@ export default async function handler(req, res) {
 
       // Some checks
 
-      const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         console.log("Missing authentication token");
         return res.status(401).json({ error: "Missing authentication token" });

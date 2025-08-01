@@ -1,7 +1,6 @@
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { getMonthlyIncome } from "../../data/chartDataProcessing";
 import { useDataContext } from "../../context/DataContext";
-import { useEffect } from "react";
 
 const IncomeChart = () => {
   const { connectionStatus, recentTransactions } = useDataContext();
@@ -17,15 +16,6 @@ const IncomeChart = () => {
     previousMonth > 0
       ? ((currentMonth - previousMonth) / previousMonth) * 100
       : 0;
-
-  // Inside IncomeChart component:
-  useEffect(() => {
-    console.log("Recent transactions", recentTransactions);
-    console.log("Income data", incomeData);
-    console.log("Current month income", currentMonth);
-    console.log("Previous month income", previousMonth);
-    console.log("Percentage change", percentageChange);
-  }, []);
 
   if (connectionStatus === "disconnected") {
     return (
