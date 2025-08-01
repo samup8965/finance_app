@@ -99,7 +99,7 @@ export const RecurringPayments = () => {
                   {connectionStatus === "connected" &&
                   !recurringPayments[0].total
                     ? "Your recurring payments will appear here once you start some subscriptions"
-                    : "Hello"}
+                    : ""}
                 </p>
 
                 {recurringPayments[0].total && (

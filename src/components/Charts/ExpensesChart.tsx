@@ -3,7 +3,7 @@ import { getMonthlyExpenses } from "../../data/chartDataProcessing";
 import { useDataContext } from "../../context/DataContext";
 
 const ExpensesChart = () => {
-  const { recentTransactions } = useDataContext();
+  const { connectionStatus, recentTransactions } = useDataContext();
   const expensesData = getMonthlyExpenses(recentTransactions);
 
   const currentMonth =
@@ -18,6 +18,16 @@ const ExpensesChart = () => {
     previousMonth > 0
       ? ((currentMonth - previousMonth) / previousMonth) * 100
       : 0;
+
+  if (connectionStatus === "disconnected") {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          Bank Connection Needed
+        </h3>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">

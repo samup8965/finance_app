@@ -3,7 +3,7 @@ import { getCategoryBreakdown } from "../../data/chartDataProcessing";
 import { useDataContext } from "../../context/DataContext";
 
 const CategoryChart = () => {
-  const { recentTransactions } = useDataContext();
+  const { connectionStatus, recentTransactions } = useDataContext();
   const categoryData = getCategoryBreakdown(recentTransactions);
 
   // Colors for different categories
@@ -31,6 +31,16 @@ const CategoryChart = () => {
 
   const topCategoryPercentage =
     totalSpending > 0 ? (topCategory.value / totalSpending) * 100 : 0;
+
+  if (connectionStatus === "disconnected") {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          Bank Connection Needed
+        </h3>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">

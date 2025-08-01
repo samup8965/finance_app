@@ -11,12 +11,26 @@ import { getMonthlyBalance } from "../../data/chartDataProcessing";
 import { useDataContext } from "../../context/DataContext";
 
 const NetBalanceChart = () => {
-  const { recentTransactions } = useDataContext();
+  const { connectionStatus, recentTransactions } = useDataContext();
   const balanceData = getMonthlyBalance(recentTransactions);
 
   // Get current balance (latest month)
   const currentBalance =
     balanceData.length > 0 ? balanceData[balanceData.length - 1].balance : 0;
+
+  if (connectionStatus === "disconnected") {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          Bank Connection Needed
+        </h3>
+        <p className="text-gray-600 mb-4">
+          To view your monthly balance insights, please connect your bank
+          account.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">

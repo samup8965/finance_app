@@ -203,7 +203,10 @@ export const SavingGoals = () => {
   }
 
   // Data loading state (connected but data not loaded yet)
-  if (connectionStatus === "connected" && (loading || !loaded)) {
+  if (
+    (connectionStatus === "connected" || connectionStatus === "disconnected") &&
+    (loading || !loaded)
+  ) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

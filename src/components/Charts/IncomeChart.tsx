@@ -1,19 +1,42 @@
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { getMonthlyIncome } from "../../data/chartDataProcessing";
 import { useDataContext } from "../../context/DataContext";
+import { useEffect } from "react";
 
 const IncomeChart = () => {
-  const { recentTransactions } = useDataContext();
+  const { connectionStatus, recentTransactions } = useDataContext();
   const incomeData = getMonthlyIncome(recentTransactions);
 
   const currentMonth =
     incomeData.length > 0 ? incomeData[incomeData.length - 1].income : 0;
+
+  console.log(currentMonth);
   const previousMonth =
     incomeData.length > 1 ? incomeData[incomeData.length - 2].income : 0;
+
   const percentageChange =
     previousMonth > 0
       ? ((currentMonth - previousMonth) / previousMonth) * 100
       : 0;
+
+  // Inside IncomeChart component:
+  useEffect(() => {
+    console.log("Recent transactions", recentTransactions);
+    console.log("Income data", incomeData);
+    console.log("Current month income", currentMonth);
+    console.log("Previous month income", previousMonth);
+    console.log("Percentage change", percentageChange);
+  }, []);
+
+  if (connectionStatus === "disconnected") {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 text-center">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          Bank Connection Needed
+        </h3>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
