@@ -171,6 +171,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         },
       });
       const balanceData = await balanceResponse.json();
+      console.log(balanceData);
 
       const recurringResponse = await fetch("/api/recurring_payments", {
         method: "GET",

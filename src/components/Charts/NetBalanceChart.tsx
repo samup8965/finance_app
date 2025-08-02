@@ -7,12 +7,12 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { getMonthlyBalance } from "../../data/chartDataProcessing";
+import { getMonthlyCashflow } from "../../data/chartDataProcessing";
 import { useDataContext } from "../../context/DataContext";
 
 const NetBalanceChart = () => {
   const { connectionStatus, recentTransactions } = useDataContext();
-  const balanceData = getMonthlyBalance(recentTransactions);
+  const balanceData = getMonthlyCashflow(recentTransactions);
 
   // Get current balance (latest month)
   const currentBalance =
@@ -35,9 +35,7 @@ const NetBalanceChart = () => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-1">
-          Monthly Net Balance
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-1">Cashflow</h3>
         <div className="text-3xl font-bold text-gray-900">
           {currentBalance < 0 && <span className="text-black-500">-</span>}£
           {Math.abs(currentBalance).toLocaleString()}

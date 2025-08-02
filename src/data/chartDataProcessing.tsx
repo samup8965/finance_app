@@ -1,4 +1,5 @@
 import { type Transaction } from "../types/bank_data";
+import { type Account } from "../types/bank_data";
 
 export const getMonthlyIncome = (transactions: Transaction[]) => {
   const monthlyData = transactions
@@ -115,7 +116,7 @@ export const getCategoryBreakdown = (transactions: Transaction[]) => {
   }));
 };
 
-export const getMonthlyBalance = (transactions: Transaction[]) => {
+export const getMonthlyCashflow = (transactions: Transaction[]) => {
   const monthlyData = transactions.reduce((acc, transaction) => {
     const month = new Date(transaction.date).toLocaleDateString("en-US", {
       month: "short",
