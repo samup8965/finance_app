@@ -70,13 +70,7 @@ export default async function handler(req, res) {
     // Get tokens from cookies
     let accessToken = req.cookies.truelayer_access_token;
     let refreshToken = req.cookies.truelayer_refresh_token;
-
     const authHeader = req.headers.authorization;
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser(token);
 
     console.log("Access token exists:", !!accessToken);
     console.log("Refresh token exists:", !!refreshToken);
@@ -101,6 +95,11 @@ export default async function handler(req, res) {
           },
         },
       });
+
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser(token);
 
       if (authError) {
         console.error("Auth Error", authError);
@@ -151,6 +150,16 @@ export default async function handler(req, res) {
             },
           },
         });
+
+        const {
+          data: { user },
+          error: authError,
+        } = await supabase.auth.getUser(token);
+
+        if (authError) {
+          console.error("Auth Error", authError);
+          return res.status(401).json({ error: authError });
+        }
 
         // Store new access token in Database as well for source of truth in case cookies fail
 
