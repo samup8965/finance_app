@@ -1,5 +1,5 @@
 import { useDataContext } from "../../context/DataContext";
-import { getMonthlyBalance } from "../../data/chartDataProcessing";
+import { getMonthlyCashflow } from "../../data/chartDataProcessing";
 import {
   BarChart,
   Bar,
@@ -13,7 +13,7 @@ const Accountbalance = () => {
   const { accounts, connectionStatus, recentTransactions } = useDataContext();
 
   // Get the monthly balance data
-  const monthlyData = getMonthlyBalance(recentTransactions);
+  const monthlyData = getMonthlyCashflow(recentTransactions);
 
   // Find current month to highlight it
   const currentMonth = new Date().getMonth();

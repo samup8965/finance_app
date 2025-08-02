@@ -1,5 +1,4 @@
 import { type Transaction } from "../types/bank_data";
-import { type Account } from "../types/bank_data";
 
 export const getMonthlyIncome = (transactions: Transaction[]) => {
   const monthlyData = transactions

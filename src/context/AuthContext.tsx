@@ -96,7 +96,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         console.error("sign in error occurred: ", error);
         return { success: false, error: error.message };
       }
-      console.log("sign-in success: ", data);
       return { success: true, data };
     } catch (error) {
       console.error("An error occurred", error);
@@ -110,7 +109,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     console.log("🔍 Checking for existing session...");
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log(session);
       setSession(session);
       setLoading(false);
     });

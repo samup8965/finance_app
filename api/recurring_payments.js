@@ -102,7 +102,8 @@ export default async function handler(req, res) {
       const { data: bankConnection, error: dbError } = await supabase
         .from("bank_connection")
         .select("access_token, refresh_token")
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .single();
 
       if (dbError) {
         console.error("Database error:", dbError);
